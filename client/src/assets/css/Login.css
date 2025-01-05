@@ -1,0 +1,203 @@
+body {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+}
+
+.login-container {
+  display: flex;
+  width: 100%;
+  height: 480px;
+  background: #f0f2f5;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.login-left {
+  width: 40%;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-right {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5rem;
+}
+
+.login-form h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.input-with-icon .icon {
+  margin-right: 0.5rem;
+}
+
+.input-with-icon input[type="text"],
+.input-with-icon input[type="password"] {
+  font-family: "Montserrat", sans-serif;
+  font-size: 10px;
+  margin-left: 10px;
+  width: 80%;
+  padding: 0.5rem;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+}
+
+.input-with-icon input[type="text"]:focus,
+.input-with-icon input[type="password"]:focus {
+  border: none;
+  border-bottom: 1px solid #007bff;
+  border-radius: 0;
+  outline: none;
+}
+
+.input-with-icon .valid-icon {
+  margin-left: 0.5rem;
+  color: green;
+}
+
+.input-with-icon .toggle-password {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-size: 12px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  font-size: 9px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  transform: translateY(2px);
+}
+
+.login-right .content {
+  text-align: center;
+}
+
+.login-right .content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.login-right .content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.login-right .content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.social-login {
+  text-align: center;
+  margin-top: 0.8rem;
+}
+
+.social-login p {
+  margin-bottom: 0.5rem;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.social-icons .google-icon,
+.social-icons .facebook-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.signup-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+.social-login p {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0.3rem 0;
+}
+
+.social-icons {
+  gap: 0.8rem;
+}
+
+.social-icons .google-icon,
+.social-icons .facebook-icon {
+  font-size: 1.2rem;
+}
+
+.signup-link {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
