@@ -1,0 +1,163 @@
+.delivery-tracking {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+}
+
+.status-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.map-wrapper {
+  height: 400px;
+  position: relative;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.map-container {
+  /* margin-top: 20px !important; */
+  margin-bottom: 0 !important;
+  width: 100%;
+  z-index: 1;
+}
+
+.driver-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 0 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 2;
+}
+
+.driver-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.driver-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #4caf50;
+  flex-shrink: 0;
+}
+
+.driver-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.driver-name {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.info-left {
+  flex: 1;
+}
+
+.info-right {
+  text-align: right;
+  padding-left: 20px;
+}
+
+.info-item {
+  margin: 8px 0;
+  color: #666;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-label {
+  color: #888;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.rating-star {
+  color: #f1c40f;
+  font-size: 1.2rem;
+  margin-right: 4px;
+}
+
+.deliveries-count {
+  font-weight: 600;
+  color: #4caf50;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rating-modal {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rating-modal h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.star {
+  transition: transform 0.2s;
+}
+
+.star:hover {
+  transform: scale(1.2);
+}
+
+.star.active {
+  color: #f1c40f !important;
+}
+
+.rating-modal button:hover {
+  background-color: #45a049;
+}
+
+.rating-modal textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
