@@ -1,8 +1,13 @@
 const express = require("express");
 const cors = require("cors");
+const db = require("../models");
 require("dotenv").config();
 
 const app = express();
+
+db.sequelize.sync({ force: false }).then(() => {
+  console.log("Database synchronized");
+});
 
 app.use(cors());
 app.use(express.json());
