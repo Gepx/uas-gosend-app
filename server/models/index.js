@@ -1,6 +1,27 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const config = require("../config/config.js")["development"];
+const mysql = require("mysql2/promise");
 
+async function initializeDatabase() {
+  try {
+    // Create connection without database selected
+    const connection = await mysql.createConnection({
+      host: config.host,
+      user: config.username,
+      password: config.password,
+    });
+
+    // Create database if it doesn't exist
+    await connection.query(`CREATE DATABASE IF NOT EXISTS ${config.database}`);
+    console.log(`Database ${config.database} created or already exists.`);
+
+    // Close the connection
+    await connection.end();
+  } catch (error) {
+    console.error("Error initializing database:", error);
+  }
+}
+// Create Sequelize instance
 const sequelize = new Sequelize(
   config.database,
   config.username,
@@ -8,6 +29,14 @@ const sequelize = new Sequelize(
   {
     host: config.host,
     dialect: config.dialect,
+    port: config.port,
+    logging: false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   }
 );
 
@@ -16,9 +45,22 @@ const db = {};
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.Address = require("./Address")(sequelize, DataTypes);
-db.Driver = require("./Driver")(sequelize, DataTypes);
-db.History = require("./History")(sequelize, DataTypes);
-db.User = require("./User")(sequelize, DataTypes);
+// Import models
+db.Address = require("./address.js")(sequelize, DataTypes);
+db.Driver = require("./driver.js")(sequelize, DataTypes);
+db.History = require("./history.js")(sequelize, DataTypes);
+db.User = require("./user.js")(sequelize, DataTypes);
+
+// Define associations
+db.User.hasMany(db.History);
+db.History.belongsTo(db.User);
+
+db.Driver.hasMany(db.History);
+db.History.belongsTo(db.Driver);
+
+db.Address.hasMany(db.User);
+db.User.belongsTo(db.Address);
+
+initializeDatabase();
 
 module.exports = db;
