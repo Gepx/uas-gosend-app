@@ -47,39 +47,41 @@ const History = () => {
       </div>
 
       {selectedDelivery && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-left">
+        <div className="history-modal-overlay" onClick={closeModal}>
+          <div
+            className="history-modal-content"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="history-modal-left">
               <img
                 src={selectedDelivery.driverImg}
                 alt="Driver"
-                className="modal-driver-image"
+                className="history-modal-driver-image"
               />
               <h3>{selectedDelivery.driverName}</h3>
               <p className="license-plate">{selectedDelivery.licensePlate}</p>
               <p className="motor-type">{selectedDelivery.motorType}</p>
             </div>
 
-            <div className="modal-right">
-              <div className="location-section">
-                <div className="pickup-info">
+            <div className="history-modal-right">
+              <div className="history-location-section">
+                <div className="history-pickup-info">
                   <strong>Pick-up:</strong>
                   <p>{selectedDelivery.pickupLocation}</p>
                 </div>
-                <div className="delivery-info">
+                <div className="history-delivery-info">
                   <strong>Delivery:</strong>
                   <p>{selectedDelivery.deliveryLocation}</p>
                 </div>
               </div>
 
-              <div className="price-rating-section">
-                <div className="price-info">
+              <div className="history-price-rating-section">
+                <div className="history-price-info">
                   <strong>Price:</strong>
                   <p>Rp {selectedDelivery.price.toLocaleString()}</p>
                 </div>
-                <div className="rating-info">
+                <div className="history-rating-info">
                   <strong>Rating:</strong>
-                  <div className="stars">
+                  <div className="history-stars">
                     {[...Array(5)].map((_, index) => (
                       <span
                         key={index}
@@ -98,12 +100,12 @@ const History = () => {
                 </div>
               </div>
 
-              <div className="comment-section">
+              <div className="history-comment-section">
                 <strong>Comment:</strong>
                 <p>{selectedDelivery.comment}</p>
               </div>
 
-              <div className="modal-footer">
+              <div className="history-modal-footer">
                 <span
                   className={`status ${selectedDelivery.status.toLowerCase()}`}>
                   {selectedDelivery.status}
@@ -114,7 +116,7 @@ const History = () => {
               </div>
             </div>
 
-            <button className="modal-close" onClick={closeModal}>
+            <button className="history-modal-close" onClick={closeModal}>
               ×
             </button>
           </div>
