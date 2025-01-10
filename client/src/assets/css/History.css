@@ -89,7 +89,7 @@
 }
 
 /* Modal styles */
-.modal-overlay {
+.history-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -102,7 +102,7 @@
   z-index: 1000;
 }
 
-.modal-content {
+.history-modal-content {
   background: white;
   border-radius: 20px;
   width: 800px;
@@ -114,59 +114,59 @@
   padding: 30px;
 }
 
-.modal-left {
+.history-modal-left {
   text-align: center;
   padding: 20px;
   border-right: 1px solid #eee;
 }
 
-.modal-driver-image {
+.history-modal-driver-image {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   margin-bottom: 15px;
 }
 
-.modal-right {
+.history-modal-right {
   padding: 20px;
 }
 
-.location-section {
+.history-location-section {
   margin-bottom: 25px;
 }
 
-.pickup-info,
-.delivery-info {
+.history-pickup-info,
+.history-delivery-info {
   margin-bottom: 15px;
 }
 
-.pickup-info strong,
-.delivery-info strong {
+.history-pickup-info strong,
+.history-delivery-info strong {
   display: block;
   color: #666;
   margin-bottom: 5px;
 }
 
-.price-rating-section {
+.history-price-rating-section {
   display: flex;
   justify-content: space-between;
   margin-bottom: 25px;
 }
 
-.comment-section {
+.history-comment-section {
   background: #f9f9f9;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 25px;
 }
 
-.modal-footer {
+.history-modal-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.modal-close {
+.history-modal-close {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -183,7 +183,7 @@
   justify-content: center;
 }
 
-.modal-close:hover {
+.history-modal-close:hover {
   background: #f0f0f0;
 }
 
