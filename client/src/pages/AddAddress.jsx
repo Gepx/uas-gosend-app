@@ -10,11 +10,10 @@ const AddAddress = () => {
   const { addAddress } = useAddressStore();
   const [suggestions, setSuggestions] = useState([]);
   const [formData, setFormData] = useState({
-    name: "",
     recipientName: "",
     phone: "",
     address: "",
-    label: "home",
+    label: "",
     notes: "",
   });
 
@@ -55,24 +54,25 @@ const AddAddress = () => {
 
   return (
     <div className="address-form-page">
+      <button
+        className="back-button"
+        onClick={() => navigate("/saved-address")}>
+        <FontAwesomeIcon icon={faArrowLeft} /> Back
+      </button>
+
       <div className="form-header">
-        <button
-          className="back-button"
-          onClick={() => navigate("/saved-address")}>
-          <FontAwesomeIcon icon={faArrowLeft} /> Back
-        </button>
         <h2>Add New Address</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="address-form">
         <div className="form-group">
-          <label>Address Name:</label>
+          <label>Label:</label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="label"
+            value={formData.label}
             onChange={handleChange}
-            placeholder="e.g., My Home"
+            placeholder="e.g., Home, Office, etc."
             required
           />
         </div>
@@ -127,17 +127,7 @@ const AddAddress = () => {
           )}
         </div>
 
-        <div className="form-group">
-          <label>Label:</label>
-          <select name="label" value={formData.label} onChange={handleChange}>
-            <option value="home">Home</option>
-            <option value="office">Office</option>
-            <option value="apartment">Apartment</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div className="form-group">
+        <div className="form-group full-width">
           <label>Notes:</label>
           <textarea
             name="notes"
