@@ -179,14 +179,14 @@ function AddDriver() {
             />
           </div>
 
-          <div className="form-group full-width">
+          <div className="form-group">
             <label>Address</label>
-            <textarea
+            <input
+              type="text"
               name="address"
               value={driverData.address}
               onChange={handleInputChange}
               placeholder="Enter driver's address"
-              rows="3"
             />
           </div>
         </div>
