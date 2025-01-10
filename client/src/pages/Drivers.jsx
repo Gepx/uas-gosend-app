@@ -82,9 +82,6 @@ function Drivers() {
               className="driver-card"
               onClick={() => handleDriverClick(driver)}>
               <div className="card-header">
-                <div className="driver-image">
-                  <img src={driver.profileImage} alt={driver.name} />
-                </div>
                 <button
                   className="menu-btn"
                   onClick={(e) => handleMenuClick(e, driver.id)}
@@ -104,9 +101,24 @@ function Drivers() {
                   </div>
                 )}
               </div>
+
+              <div className="driver-image">
+                <img
+                  src={driver.profileImage || "/default-profile.png"}
+                  alt={driver.name}
+                />
+              </div>
+
               <div className="driver-info">
                 <h3>{driver.name}</h3>
-                <p>{driver.motorbikeType}</p>
+                <div className="driver-detail">
+                  <span className="label">License Plate</span>
+                  <span className="value">{driver.licensePlate}</span>
+                </div>
+                <div className="driver-detail">
+                  <span className="label">License No.</span>
+                  <span className="value">{driver.licenseNumber}</span>
+                </div>
               </div>
             </div>
           ))}
@@ -118,7 +130,7 @@ function Drivers() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="driver-header">
               <img
-                src={selectedDriver.profileImage}
+                src={selectedDriver.profileImage || "/default-profile.png"}
                 alt={selectedDriver.name}
                 className="driver-detail-image"
               />
@@ -127,31 +139,31 @@ function Drivers() {
 
             <div className="driver-info-grid">
               <div className="info-item">
-                <label>Email</label>
+                <label>EMAIL</label>
                 <p>{selectedDriver.email}</p>
               </div>
               <div className="info-item">
-                <label>Phone Number</label>
+                <label>PHONE NUMBER</label>
                 <p>{selectedDriver.phoneNumber}</p>
               </div>
               <div className="info-item">
-                <label>License Plate</label>
+                <label>LICENSE PLATE</label>
                 <p>{selectedDriver.licensePlate}</p>
               </div>
               <div className="info-item">
-                <label>License Number</label>
+                <label>LICENSE NUMBER</label>
                 <p>{selectedDriver.licenseNumber}</p>
               </div>
               <div className="info-item">
-                <label>Motorbike Type</label>
+                <label>MOTORBIKE TYPE</label>
                 <p>{selectedDriver.motorbikeType}</p>
               </div>
               <div className="info-item">
-                <label>Experience</label>
+                <label>EXPERIENCE</label>
                 <p>{selectedDriver.experience} years</p>
               </div>
-              <div className="info-item full-width">
-                <label>Address</label>
+              <div className="info-item">
+                <label>ADDRESS</label>
                 <p>{selectedDriver.address}</p>
               </div>
             </div>
