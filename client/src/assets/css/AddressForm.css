@@ -1,6 +1,6 @@
 .address-form-page {
   max-width: 1000px;
-  margin: 2rem auto;
+  margin: 3.5rem auto 2rem;
   padding: 2rem;
   background: white;
   border-radius: 12px;
@@ -9,6 +9,7 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #007bff #f0f0f0;
+  position: relative;
 }
 
 /* Custom Scrollbar */
@@ -33,25 +34,32 @@
 .form-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-bottom: 2rem;
   gap: 1rem;
 }
 
 .back-button {
+  position: fixed;
+  top: 4.5rem;
+  left: calc((100vw - 1000px) / 2.8);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: none;
-  background: none;
-  color: #666;
+  background: #007bff;
+  color: white;
   cursor: pointer;
   font-size: 1rem;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border-radius: 4px;
 }
 
 .back-button:hover {
-  color: #333;
+  background: #0056b3;
+  transform: translateY(-1px);
 }
 
 .form-header h2 {
@@ -74,6 +82,7 @@
 
 .form-group {
   margin-bottom: 1.5rem;
+  position: relative;
 }
 
 .form-group.full-width {
@@ -81,11 +90,22 @@
 }
 
 .form-group label {
-  display: block;
+  display: inline-block;
   margin-bottom: 0.5rem;
-  color: #444;
+  color: #2c3e50;
   font-weight: 500;
   font-size: 0.95rem;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.form-group label:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.15);
+  background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
 }
 
 .form-group input,
@@ -115,13 +135,12 @@
 
 .suggestions-list {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px);
   left: 0;
   right: 0;
   background: white;
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  margin-top: 4px;
   max-height: 200px;
   overflow-y: auto;
   z-index: 1000;
@@ -191,6 +210,11 @@
   .address-form-page {
     margin: 1rem;
     padding: 1rem;
+  }
+
+  .back-button {
+    left: 1rem;
+    top: 5rem;
   }
 
   .address-form {
