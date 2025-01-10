@@ -1,6 +1,6 @@
 .add-driver-container {
   max-width: 1000px;
-  margin: 2rem auto;
+  margin: 4rem auto 2rem;
   padding: 2rem;
   background: white;
   border-radius: 12px;
@@ -9,6 +9,7 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #007bff #f0f0f0;
+  position: relative;
 }
 
 .add-driver-container::-webkit-scrollbar {
@@ -30,27 +31,9 @@
 }
 
 .form-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-  gap: 1rem;
-}
-
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  background: none;
-  color: #666;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.3s ease;
-}
-
-.back-button:hover {
-  color: #333;
+  text-align: center;
+  /* padding-top: 2rem; */
+  /* margin-bottom: 2rem; */
 }
 
 .form-header h1 {
