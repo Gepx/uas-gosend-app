@@ -50,6 +50,7 @@ db.Address = require("./address.js")(sequelize, DataTypes);
 db.Driver = require("./driver.js")(sequelize, DataTypes);
 db.History = require("./history.js")(sequelize, DataTypes);
 db.User = require("./user.js")(sequelize, DataTypes);
+db.Voucher = require("./voucher.js")(sequelize, DataTypes);
 
 // Define associations
 db.User.hasMany(db.History);
@@ -60,6 +61,9 @@ db.History.belongsTo(db.Driver);
 
 db.Address.hasMany(db.User);
 db.User.belongsTo(db.Address);
+
+db.Voucher.hasMany(db.User);
+db.User.belongsTo(db.Voucher);
 
 initializeDatabase();
 
