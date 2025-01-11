@@ -6,6 +6,10 @@ const useDriverStore = create((set) => ({
   loading: false,
   error: null,
 
+  setLoading: (loading) => set({ loading }),
+  setError: (error) => set({ error }),
+  resetError: () => set({ error: null }),
+
   // Fetch all drivers
   fetchDrivers: async () => {
     set({ loading: true });
