@@ -17,7 +17,7 @@ const EditDriver = () => {
     licensePlate: "",
     licenseNumber: "",
     motorbikeType: "",
-    experience: "",
+    yearExperience: "",
     address: "",
     profileImage: "",
   });
@@ -180,8 +180,8 @@ const EditDriver = () => {
             <label>Years of Experience</label>
             <input
               type="number"
-              name="experience"
-              value={formData.experience}
+              name="yearExperience"
+              value={formData.yearExperience}
               onChange={handleChange}
               placeholder="Years of driving experience"
               min="0"
