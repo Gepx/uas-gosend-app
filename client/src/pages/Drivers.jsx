@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useDriverStore from "../store/useDriverStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,9 +11,14 @@ import "../assets/css/Drivers.css";
 
 function Drivers() {
   const navigate = useNavigate();
-  const { drivers, deleteDriver, loading, setLoading } = useDriverStore();
+  const { drivers, deleteDriver, loading, setLoading, error, fetchDrivers } =
+    useDriverStore();
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
+
+  useEffect(() => {
+    fetchDrivers();
+  }, [fetchDrivers]);
 
   const handleAddClick = () => {
     navigate("/add-driver");
@@ -56,6 +61,9 @@ function Drivers() {
       setActiveMenu(null);
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="drivers-container" onClick={handleClickOutside}>
@@ -160,7 +168,7 @@ function Drivers() {
               </div>
               <div className="info-item">
                 <label>EXPERIENCE</label>
-                <p>{selectedDriver.experience} years</p>
+                <p>{selectedDriver.yearExperience} years</p>
               </div>
               <div className="info-item">
                 <label>ADDRESS</label>
