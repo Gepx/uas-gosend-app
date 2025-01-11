@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAddressStore from "../store/addressStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,8 +11,12 @@ import "../assets/css/SavedAddress.css";
 
 const SavedAddress = () => {
   const navigate = useNavigate();
-  const { addresses, deleteAddress } = useAddressStore();
+  const { addresses, deleteAddress, fetchAddresses } = useAddressStore();
   const [activeMenu, setActiveMenu] = useState(null);
+
+  useEffect(() => {
+    fetchAddresses();
+  }, [fetchAddresses]);
 
   const handleMenuClick = (id) => {
     setActiveMenu(activeMenu === id ? null : id);
