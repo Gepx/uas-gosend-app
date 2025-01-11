@@ -1,29 +1,34 @@
 import { create } from "zustand";
-import { vouchers } from "../data/vouchersData";
+import voucherService from "../services/voucherService";
 
 const useVoucherStore = create((set, get) => ({
-  // States
-  vouchers: vouchers,
+  vouchers: [],
   selectedCategory: "All",
   voucherCode: "",
+  loading: false,
+  error: null,
 
-  // Actions
   setSelectedCategory: (category) => set({ selectedCategory: category }),
   setVoucherCode: (code) => set({ voucherCode: code }),
 
-  // Selector for filtered vouchers
-  getFilteredVouchers: () => {
-    const { vouchers, selectedCategory } = get();
-    return selectedCategory === "All"
-      ? vouchers
-      : vouchers.filter((voucher) => voucher.category === selectedCategory);
+  fetchVouchers: async () => {
+    set({ loading: true });
+    try {
+      const data = await voucherService.getAllVouchers();
+      set({ vouchers: data, loading: false });
+    } catch (error) {
+      set({ error: error.message, loading: false });
+    }
   },
 
-  // Action for handling voucher code submission
+  getFilteredVouchers: () => {
+    const { vouchers, selectedCategory } = get();
+    if (selectedCategory === "All") return vouchers;
+    return vouchers.filter((voucher) => voucher.category === selectedCategory);
+  },
+
   submitVoucherCode: () => {
-    const { voucherCode } = get();
-    console.log("Submitted code:", voucherCode);
-    set({ voucherCode: "" }); // Reset the code after submission
+    set({ voucherCode: "" });
   },
 }));
 
