@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./models");
+const addressRoutes = require("./routes/addressRoutes");
 
 const app = express();
 
@@ -22,8 +23,8 @@ db.sequelize
     console.error("Unable to connect to the database:", error);
   });
 
-// Routes
-// app.use("/api", routes);
+// Route
+app.use("/api/addresses", addressRoutes);
 
 const PORT = 5000;
 
