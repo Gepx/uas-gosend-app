@@ -15,7 +15,7 @@ function AddDriver() {
     licensePlate: "",
     motorbikeType: "",
     email: "",
-    experience: "",
+    yearExperience: "",
     address: "",
     profileImage: null,
     licenseNumber: "",
