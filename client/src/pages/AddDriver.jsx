@@ -171,8 +171,8 @@ function AddDriver() {
             <label>Years of Experience</label>
             <input
               type="number"
-              name="experience"
-              value={driverData.experience}
+              name="yearExperience"
+              value={driverData.yearExperience}
               onChange={handleInputChange}
               placeholder="Years of driving experience"
               min="0"
