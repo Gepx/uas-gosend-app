@@ -36,8 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     licenseNumber: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
-    vehicleType: {
+    motorbikeType: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -51,13 +52,10 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        len: [2, 50],
-      },
     },
     profileImage: {
       type: DataTypes.STRING, // URL to the image
-      allowNull: true,
+      allowNull: false,
     },
   });
   return Driver;
