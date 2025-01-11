@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./models");
 const addressRoutes = require("./routes/addressRoutes");
+const driverRoutes = require("./routes/driverRoutes");
 
 const app = express();
 
@@ -23,8 +24,9 @@ db.sequelize
     console.error("Unable to connect to the database:", error);
   });
 
-// Route
+// Routes
 app.use("/api/addresses", addressRoutes);
+app.use("/api/drivers", driverRoutes);
 
 const PORT = 5000;
 
