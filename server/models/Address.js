@@ -7,18 +7,23 @@ module.exports = (sequelize, DataTypes) => {
     },
     label: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
-    recipient: {
+    recipientName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     phone: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     address: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     notes: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
   });
   return Address;
