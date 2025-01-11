@@ -3,7 +3,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../assets/css/Vouchers.css";
 import useVoucherStore from "../store/voucherStore";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faTicket } from "@fortawesome/free-solid-svg-icons";
 
@@ -13,15 +13,25 @@ const Vouchers = () => {
   const getFilteredVouchers = useVoucherStore(
     (state) => state.getFilteredVouchers
   );
-  const { setSelectedCategory, setVoucherCode, submitVoucherCode } =
-    useVoucherStore();
+  const {
+    setSelectedCategory,
+    setVoucherCode,
+    submitVoucherCode,
+    fetchVouchers,
+    loading,
+    error,
+  } = useVoucherStore();
 
   const [showCodeList, setShowCodeList] = useState(false);
   const [userVouchers, setUserVouchers] = useState([]);
 
   const filteredVouchers = useMemo(
     () => getFilteredVouchers(),
-    [selectedCategory, getFilteredVouchers]
+    [
+      selectedCategory,
+      getFilteredVouchers,
+      useVoucherStore((state) => state.vouchers),
+    ]
   );
 
   // Filter user vouchers based on selected category
@@ -139,7 +149,10 @@ const Vouchers = () => {
     <div className="voucher-card">
       <h3>{voucher.voucher} Voucher</h3>
       <p className="price">Rp {voucher.price.toLocaleString("id-ID")}</p>
-      <p className="description">{voucher.description}</p>
+      <p className="description">
+        Get Rp {voucher.price.toLocaleString("id-ID")} off on your{" "}
+        {voucher.category.toLowerCase()} order
+      </p>
       <p className="min-purchase">
         Minimum Purchase: Rp {voucher.minPurchase.toLocaleString("id-ID")}
       </p>
@@ -151,6 +164,13 @@ const Vouchers = () => {
       </button>
     </div>
   );
+
+  useEffect(() => {
+    fetchVouchers();
+  }, [fetchVouchers]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="vouchers-page">
