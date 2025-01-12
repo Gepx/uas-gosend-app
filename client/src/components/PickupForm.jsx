@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../assets/css/PickupForm.css";
@@ -27,6 +27,16 @@ const PickupForm = ({ onSubmit }) => {
     setPackageType,
     setWeight,
   } = usePackageStore();
+
+  useEffect(() => {
+    setInputValue("");
+    setSuggestions([]);
+    setMarkerPosition(null);
+    setMapCenter([0, 0]);
+
+    setPackageType("");
+    setWeight("");
+  }, []);
 
   const handleInputChange = async (event) => {
     const query = event.target.value;

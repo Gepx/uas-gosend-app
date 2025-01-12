@@ -17,12 +17,22 @@ const Home = () => {
     }
   };
 
+  const handleDeliveryComplete = () => {
+    // Reset all states when delivery is complete
+    setCurrentStep("pickup");
+    setPickupLocation(null);
+  };
+
   return (
     <div className="home-container">
       {currentStep === "pickup" ? (
         <PickupForm onSubmit={handlePickupSubmit} />
       ) : (
-        <DeliverForm onBack={handleBack} pickupLocation={pickupLocation} />
+        <DeliverForm
+          onBack={handleBack}
+          pickupLocation={pickupLocation}
+          onDeliveryComplete={handleDeliveryComplete}
+        />
       )}
     </div>
   );
