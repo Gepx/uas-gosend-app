@@ -4,6 +4,7 @@ const db = require("./models");
 const addressRoutes = require("./routes/addressRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const voucherRoutes = require("./routes/voucherRoutes");
+const routeRoutes = require("./routes/routeRoutes");
 
 const app = express();
 
@@ -29,6 +30,7 @@ db.sequelize
 app.use("/api/addresses", addressRoutes);
 app.use("/api/drivers", driverRoutes);
 app.use("/api/vouchers", voucherRoutes);
+app.use("/api/routes", routeRoutes);
 
 const PORT = 5000;
 
