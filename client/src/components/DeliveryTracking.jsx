@@ -12,6 +12,7 @@ import motorbikeIcon from "../assets/images/scooter.png";
 import driverPlaceholder from "../assets/images/driver-placeholder.png";
 import "../assets/css/DeliveryTracking.css";
 import RatingModal from "./RatingModal";
+import useDriverStore from "../store/useDriverStore";
 
 // Custom driver icon
 const customDriverIcon = new L.Icon({
@@ -38,16 +39,30 @@ const DeliveryTracking = ({
   const lastUpdateTime = useRef(0);
   const ANIMATION_INTERVAL = 100; // Update every 100ms
   const TOTAL_JOURNEY_TIME = 30000; // 30 seconds to reach destination
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const { drivers, fetchDrivers } = useDriverStore();
+  const [deliveriesCount] = useState(
+    () => Math.floor(Math.random() * 1000) + 500
+  );
 
-  // Mock driver data
-  const driverData = {
-    name: "John Doe",
-    licensePlate: "B 1234 XYZ",
-    rating: 4.8,
-    totalDeliveries: 1250,
-    phoneNumber: "+62 812-3456-7890",
-    vehicleType: "Honda PCX 160",
-  };
+  // Fixed useEffect to prevent infinite re-renders
+  useEffect(() => {
+    const initializeDriver = async () => {
+      try {
+        await fetchDrivers();
+        // Get the latest drivers from the store
+        const currentDrivers = useDriverStore.getState().drivers;
+        if (currentDrivers && currentDrivers.length > 0) {
+          const randomIndex = Math.floor(Math.random() * currentDrivers.length);
+          setSelectedDriver(currentDrivers[randomIndex]);
+        }
+      } catch (error) {
+        console.error("Error fetching driver:", error);
+      }
+    };
+
+    initializeDriver();
+  }, []); // Empty dependency array - only runs once when component mounts
 
   // Fetch route from driver to destination
   const fetchRoute = async (start, end) => {
@@ -71,6 +86,40 @@ const DeliveryTracking = ({
 
   // Initialize driver's position and fetch initial route
   useEffect(() => {
+    // Validate coordinates
+    if (!pickupLocation || !deliveryLocation) {
+      console.error("Missing coordinates:", {
+        pickupLocation,
+        deliveryLocation,
+      });
+      return;
+    }
+
+    // Ensure coordinates are arrays with numbers
+    const validateCoords = (coords) => {
+      if (!Array.isArray(coords)) {
+        console.error("Coordinates must be an array:", coords);
+        return false;
+      }
+      if (coords.length !== 2) {
+        console.error("Coordinates must have exactly 2 values:", coords);
+        return false;
+      }
+      if (isNaN(Number(coords[0])) || isNaN(Number(coords[1]))) {
+        console.error("Coordinates must be numbers:", coords);
+        return false;
+      }
+      return true;
+    };
+
+    if (!validateCoords(pickupLocation) || !validateCoords(deliveryLocation)) {
+      console.error("Invalid coordinates format:", {
+        pickupLocation,
+        deliveryLocation,
+      });
+      return;
+    }
+
     const randomOffset = () => (Math.random() - 0.5) * 0.01;
     const initialDriverPos = [
       pickupLocation[0] + randomOffset(),
@@ -88,7 +137,7 @@ const DeliveryTracking = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [pickupLocation]);
+  }, [pickupLocation, deliveryLocation]);
 
   // Animate driver's movement along the route
   useEffect(() => {
@@ -227,8 +276,15 @@ const DeliveryTracking = ({
             }}
           />
           <div style={{ flex: 1 }}>
-            <h3 style={{ margin: "0 0 8px 0", color: "#333" }}>
-              {driverData.name}
+            <h3
+              style={{
+                marginBottom: "0px",
+                color: "#333",
+                textAlign: "left",
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+              }}>
+              {selectedDriver?.name}
             </h3>
             <div
               style={{
@@ -238,23 +294,22 @@ const DeliveryTracking = ({
               }}>
               <div>
                 <p style={{ margin: "4px 0", color: "#666" }}>
-                  <strong>License Plate:</strong> {driverData.licensePlate}
+                  <strong>License Plate:</strong> {selectedDriver?.licensePlate}
                 </p>
                 <p style={{ margin: "4px 0", color: "#666" }}>
-                  <strong>Vehicle:</strong> {driverData.vehicleType}
+                  <strong>Vehicle:</strong> {selectedDriver?.motorbikeType}
                 </p>
                 <p style={{ margin: "4px 0", color: "#666" }}>
-                  <strong>Phone:</strong> {driverData.phoneNumber}
+                  <strong>Phone:</strong> {selectedDriver?.phoneNumber}
                 </p>
               </div>
               <div>
                 <p style={{ margin: "4px 0", color: "#666" }}>
                   <strong>Rating:</strong>{" "}
-                  <span style={{ color: "#f1c40f" }}>★</span>{" "}
-                  {driverData.rating}
+                  <span style={{ color: "#f1c40f" }}>★</span> 5.0
                 </p>
                 <p style={{ margin: "4px 0", color: "#666" }}>
-                  <strong>Deliveries:</strong> {driverData.totalDeliveries}+
+                  <strong>Deliveries:</strong> {deliveriesCount}+
                 </p>
               </div>
             </div>
@@ -265,7 +320,7 @@ const DeliveryTracking = ({
       {/* Rating Modal */}
       {showRatingModal && (
         <RatingModal
-          driverName={driverData.name}
+          driverName={selectedDriver?.name}
           onSubmit={handleRatingSubmit}
           onClose={handleSkipRating}
         />
