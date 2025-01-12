@@ -5,7 +5,6 @@
   align-items: center;
   padding: 20px;
   background-color: #f9f9f9;
-  font-family: "Montserrat", sans-serif;
 }
 
 .section-send h1 {
@@ -25,101 +24,137 @@
   gap: 20px;
 }
 
-/* Form Styling */
+/* Form container - match map height */
 .send-form {
   flex: 1;
   background: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 50%;
+  height: 360px; /* Match map height */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  position: relative;
+  height: 100%;
 }
 
+/* Input styling */
 .form label {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
   color: #555;
+  margin-bottom: 4px;
 }
 
 .form input {
-  padding: 0.8rem;
-  margin-bottom: 1rem;
+  width: calc(100% - 28px);
+  padding: 8px;
+  margin-bottom: 10px !important; /* Remove margin since container handles spacing */
   border-radius: 4px;
   border: 1px solid #ddd;
-  font-size: 1rem;
 }
 
-.form input:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+/* Package selection styling */
+.form-group {
+  margin-bottom: 12px;
 }
 
-button {
-  padding: 0.8rem 1.2rem;
-  border: none;
-  background-color: #007bff;
-  color: #fff;
-  font-size: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.form-group label {
+  font-size: 0.8rem !important;
+  width: 160px !important;
+  color: #555;
+  margin-bottom: 15px !important;
 }
 
-button:hover {
-  background-color: #0056b3;
+.package-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-/* Scoped styles for SendForm */
-.section-send ul.suggestions-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 0 0 4px 4px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  max-height: 230px;
-  overflow-y: auto;
+/* Button styling */
+.package-select-button {
+  padding: 8px 16px !important;
+  background-color: transparent !important;
+  color: #333 !important;
+  border: 1px solid #007bff !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-size: 0.85rem !important;
 }
 
-.section-send ul.suggestions-list li {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.package-select-button:hover {
+  background-color: rgba(0, 123, 255, 0.1) !important;
 }
 
-.section-send ul.suggestions-list li:last-child {
-  border-bottom: none;
+.package-select-button.selected {
+  background-color: #007bff !important;
+  color: white !important;
 }
 
-.section-send ul.suggestions-list li:hover {
-  background-color: #f5f5f5;
+/* Submit button */
+.submit-button {
+  margin-bottom: 0 !important;
+  margin-top: auto !important;
+  flex: 0 !important;
+  height: 80px !important;
+  padding: 8px !important;
+  background-color: #007bff !important  ;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
 }
 
-/* Map Styling */
+.submit-button:disabled {
+  align-items: flex-end;
+  background-color: #cccccc !important;
+  cursor: not-allowed !important;
+}
+
+/* Map styling */
 .send-map {
   flex: 1;
   height: 400px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .map-container {
   width: 100%;
   height: 100%;
   border-radius: 8px;
+}
+
+/* Suggestions list */
+.suggestions-list {
+  position: absolute;
+  top: 100%; /* Position right below input */
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background-color: #f5f5f5;
 }
