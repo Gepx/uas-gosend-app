@@ -57,13 +57,13 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
     setDeliveryMarker(null);
     setInputValue("");
     setRouteDetails(null);
-    onBack(); // Return to PickupForm
+    onBack();
   };
 
   if (showTracking && routeDetails) {
     return (
       <DeliveryTracking
-        pickupLocation={pickupLocation}
+        pickupLocation={pickupLocation.position}
         deliveryLocation={deliveryMarker}
         route={routeDetails.route}
         onDeliveryComplete={handleDeliveryComplete}
@@ -74,7 +74,7 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
   if (showDistance) {
     return (
       <DeliveryDistance
-        pickupLocation={pickupLocation}
+        pickupLocation={pickupLocation.position}
         deliveryLocation={deliveryMarker}
         onBack={() => setShowDistance(false)}
         onConfirm={handleRouteConfirm}
@@ -109,23 +109,25 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
         </div>
         <div className="deliver-form">
           <form className="form" onSubmit={handleSubmit}>
-            <label htmlFor="inputDeliver">Delivery Location</label>
-            <input
-              type="text"
-              id="inputDeliver"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder="Enter delivery address"
-            />
-            <ul className="suggestions-list">
-              {suggestions.map((suggestion) => (
-                <li
-                  key={suggestion.place_id || suggestion.osm_id}
-                  onClick={() => handleSuggestionClick(suggestion)}>
-                  {suggestion.display_name}
-                </li>
-              ))}
-            </ul>
+            <div className="input-group">
+              <label htmlFor="inputDeliver">Deliver to</label>
+              <input
+                type="text"
+                id="inputDeliver"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="Enter delivery address"
+              />
+              <ul className="suggestions-list">
+                {suggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.place_id || suggestion.osm_id}
+                    onClick={() => handleSuggestionClick(suggestion)}>
+                    {suggestion.display_name}
+                  </li>
+                ))}
+              </ul>
+            </div>
             <button type="submit">Confirm Delivery</button>
           </form>
         </div>
