@@ -1,52 +1,69 @@
 import React, { useState } from "react";
 import "../assets/css/RatingModal.css";
 
-const RatingModal = ({ onSubmit, onClose, driverName }) => {
+const RatingModal = ({ driverName, onSubmit, onClose }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [selectedTip, setSelectedTip] = useState(0);
+
+  const tipOptions = [1000, 2000, 5000, 10000, 50000];
+
+  const handleTipClick = (amount) => {
+    setSelectedTip(selectedTip === amount ? 0 : amount);
+  };
 
   const handleSubmit = () => {
-    onSubmit({ rating, comment });
+    onSubmit({ rating, comment, tip: selectedTip });
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="rating-modal">
+    <div className="rating-modal-overlay">
+      <div className="modal-content">
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
+
         <h2>Rate Your Driver</h2>
-        <p className="driver-name">How was your delivery with {driverName}?</p>
-        <div className="stars">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              className={`star ${star <= rating ? "active" : ""}`}
-              onClick={() => setRating(star)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setRating(star);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label={`Rate ${star} stars`}>
-              ★
-            </span>
-          ))}
-        </div>
-        <textarea
-          placeholder="Leave a comment (optional)"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          aria-label="Comment"
-        />
-        <div className="button-group">
-          <button
-            className="submit-button"
-            onClick={handleSubmit}
-            disabled={!rating}>
+        <h3>How was your delivery with {driverName}?</h3>
+
+        <div className="rating-container">
+          <div className="star-rating">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`star ${star <= rating ? "selected" : ""}`}
+                onClick={() => setRating(star)}>
+                ★
+              </span>
+            ))}
+          </div>
+
+          <div className="tip-section">
+            <p>Add a tip for your driver:</p>
+            <div className="tip-buttons">
+              {tipOptions.map((amount) => (
+                <button
+                  key={amount}
+                  className={`tip-button ${
+                    selectedTip === amount ? "selected" : ""
+                  }`}
+                  onClick={() => handleTipClick(amount)}>
+                  Rp {amount.toLocaleString()}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <textarea
+            className="comment-input"
+            placeholder="Leave a comment (optional)"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows="2"
+          />
+
+          <button className="ok-button" onClick={handleSubmit}>
             Submit Rating
-          </button>
-          <button className="skip-button" onClick={onClose}>
-            Skip
           </button>
         </div>
       </div>
