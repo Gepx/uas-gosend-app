@@ -4,8 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "../assets/css/DeliverForm.css";
 import useLocationStore from "../store/locationStore";
 import { IoArrowBack } from "react-icons/io5";
-import DeliveryDistance from "./DeliveryDistance";
-import DeliveryTracking from "./DeliveryTracking";
+import { useNavigate } from "react-router-dom";
 
 const DeliverForm = ({ onBack, pickupLocation }) => {
   const {
@@ -19,9 +18,7 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
 
   const [inputValue, setInputValue] = useState("");
   const [deliveryMarker, setDeliveryMarker] = useState(null);
-  const [showDistance, setShowDistance] = useState(false);
-  const [showTracking, setShowTracking] = useState(false);
-  const [routeDetails, setRouteDetails] = useState(null);
+  const navigate = useNavigate();
 
   const handleInputChange = async (event) => {
     const query = event.target.value;
@@ -38,49 +35,17 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
     setSuggestions([]);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (deliveryMarker) {
-      setShowDistance(true);
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!deliveryMarker) return;
+
+    navigate("/delivery-distance", {
+      state: {
+        pickupLocation: pickupLocation.position,
+        deliveryLocation: deliveryMarker,
+      },
+    });
   };
-
-  const handleRouteConfirm = (routeData) => {
-    setRouteDetails(routeData);
-    setShowTracking(true);
-  };
-
-  const handleDeliveryComplete = () => {
-    // Reset all states and go back to pickup form
-    setShowTracking(false);
-    setShowDistance(false);
-    setDeliveryMarker(null);
-    setInputValue("");
-    setRouteDetails(null);
-    onBack();
-  };
-
-  if (showTracking && routeDetails) {
-    return (
-      <DeliveryTracking
-        pickupLocation={pickupLocation.position}
-        deliveryLocation={deliveryMarker}
-        route={routeDetails.route}
-        onDeliveryComplete={handleDeliveryComplete}
-      />
-    );
-  }
-
-  if (showDistance) {
-    return (
-      <DeliveryDistance
-        pickupLocation={pickupLocation.position}
-        deliveryLocation={deliveryMarker}
-        onBack={() => setShowDistance(false)}
-        onConfirm={handleRouteConfirm}
-      />
-    );
-  }
 
   return (
     <section className="section-deliver">
@@ -128,7 +93,9 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
                 ))}
               </ul>
             </div>
-            <button type="submit">Confirm Delivery</button>
+            <button type="submit" disabled={!deliveryMarker}>
+              Confirm Delivery
+            </button>
           </form>
         </div>
       </div>
