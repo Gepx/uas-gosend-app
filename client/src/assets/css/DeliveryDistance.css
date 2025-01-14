@@ -1,6 +1,6 @@
 .section-distance {
-  padding: 20px;
-  height: calc(100vh - 80px);
+  padding: 12px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   max-width: 1000px;
@@ -10,12 +10,12 @@
 .header-container {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .arrow-back {
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: #333;
   transition: color 0.2s ease;
@@ -26,7 +26,7 @@
 }
 
 .header-container h1 {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0;
@@ -40,43 +40,40 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  min-height: 0;
 }
 
 .distance-info {
-  padding: 16px;
+  padding: 8px;
   background: #f8f9fa;
   border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-around;
 }
 
 .route-details {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 8px;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .route-details p {
-  font-size: 16px;
+  font-size: 13px;
   color: #333;
   font-weight: 500;
-  margin: 0;
-  padding: 8px 16px;
+  margin: 2px 0;
+  padding: 4px 8px;
   background: white;
-  border-radius: 8px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .distance-map {
-  flex: 1;
-  min-height: 0;
-  max-height: 300px;
-  margin: 20px;
-  position: relative;
+  height: 250px;
+  width: 100%;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 .map-container {
@@ -84,134 +81,237 @@
   width: 100%;
 }
 
-/* Loading state styling */
-.distance-info p {
-  text-align: center;
-  font-size: 16px;
+.bottom-section {
+  padding: 8px;
+  background: white;
+  border-top: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.payment-section {
+  background: white;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-icon {
+  font-size: 18px;
+  color: #00aa13;
+  display: flex;
+  align-items: center;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.payment-label {
+  font-size: 12px;
   color: #666;
-  margin: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .section-distance {
-    height: calc(100vh - 60px);
-    padding: 12px;
-  }
-
-  .header-container h1 {
-    font-size: 24px;
-  }
-
-  .route-details {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .distance-map {
-    max-height: 200px;
-  }
+.payment-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
-/* Map Marker Customization */
-.leaflet-popup-content {
-  font-size: 14px;
-  color: #333;
-  margin: 8px 12px;
+.original-price {
+  font-size: 0.9em;
+  color: #666;
+  text-decoration: line-through;
 }
 
-.leaflet-popup-content-wrapper {
+.discounted-price {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.voucher-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
   border-radius: 8px;
+  background: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.leaflet-container {
-  font: inherit;
+.voucher-button:hover {
+  background: #f5f5f5;
 }
 
-/* Add styling for the confirm button */
+.voucher-button.applied {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+.voucher-button.applied:hover {
+  background: #e8f5e9;
+}
+
 .confirm-button-container {
-  padding: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .confirm-button {
-  background-color: #4caf50;
+  width: 100%;
+  padding: 12px;
+  background-color: #00aa13;
   color: white;
-  padding: 12px 40px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .confirm-button:hover {
-  background-color: #45a049;
+  background-color: #009911;
 }
 
-.delivery-tracking {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.confirm-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
-.status-banner {
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem;
-  text-align: center;
-  font-size: 1.2rem;
+/* Confirmation Dialog */
+.confirm-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
 }
 
-.delivery-tracking .map-container {
-  height: calc(100vh - 120px);
-  margin-top: 60px;
-  width: 100%;
-  max-height: 600px;
+.confirm-dialog {
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Add this to your existing CSS */
-.driver-icon {
-  background: none;
+.confirm-dialog h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 16px;
+}
+
+.confirm-dialog p {
+  margin: 0 0 16px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.confirm-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancel-button,
+.proceed-button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button {
+  background: transparent;
+  border: 1px solid #ddd;
+  color: #666;
+}
+
+.cancel-button:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.proceed-button {
+  background: #00aa13;
   border: none;
+  color: white;
 }
 
-.driver-icon svg {
-  filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.3));
+.proceed-button:hover {
+  background: #009911;
 }
 
+/* Loading state styling */
 .loading-container {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
 }
 
-/* Add a subtle loading overlay */
-.distance-map::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.5);
-  z-index: 1000;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+.loading-container p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
 }
 
-.distance-map.loading::before {
-  opacity: 1;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section-distance {
+    padding: 8px;
+  }
+
+  .header-container h1 {
+    font-size: 18px;
+  }
+
+  .route-details {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .distance-map {
+    height: 220px;
+  }
+
+  .payment-section {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .voucher-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .confirm-dialog {
+    width: calc(100% - 16px);
+    margin: 8px;
+    padding: 12px;
+  }
 }
