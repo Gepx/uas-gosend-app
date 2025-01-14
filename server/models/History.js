@@ -35,7 +35,14 @@ module.exports = (sequelize, DataTypes) => {
         len: [2, 100],
       },
     },
-    price: {
+    originalPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      validate: {
+        min: 0,
+      },
+    },
+    discountPrice: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
