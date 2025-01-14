@@ -13,6 +13,10 @@ const RatingModal = ({ driverName, onSubmit, onClose }) => {
   };
 
   const handleSubmit = () => {
+    if (rating === 0) {
+      alert("Please select a rating before submitting");
+      return;
+    }
     onSubmit({ rating, comment, tip: selectedTip });
   };
 
