@@ -8,9 +8,6 @@ module.exports = (sequelize, DataTypes) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        len: [3, 30],
-      },
     },
     email: {
       type: DataTypes.STRING,
@@ -23,17 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        len: [6, 100],
-      },
     },
-    confirmPassword: {
+    phoneNumber: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [6, 100],
-      },
+      allowNull: true,
     },
   });
+
   return User;
 };
