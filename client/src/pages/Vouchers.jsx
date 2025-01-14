@@ -5,7 +5,13 @@ import "../assets/css/Vouchers.css";
 import useVoucherStore from "../store/voucherStore";
 import { useMemo, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faTicket } from "@fortawesome/free-solid-svg-icons";
+import {
+  faInfoCircle,
+  faTicket,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
+import VoucherCard from "../components/VoucherCard";
 
 const Vouchers = () => {
   const selectedCategory = useVoucherStore((state) => state.selectedCategory);
@@ -122,11 +128,7 @@ const Vouchers = () => {
       return (
         <div className="vouchers-grid">
           {vouchersToShow.map((voucher) => (
-            <VoucherCard
-              key={voucher.id}
-              voucher={voucher}
-              onUse={handleUseVoucher}
-            />
+            <VoucherCard key={voucher.id} voucher={voucher} />
           ))}
         </div>
       );
@@ -137,7 +139,7 @@ const Vouchers = () => {
         <Slider {...sliderSettings}>
           {vouchersToShow.map((voucher) => (
             <div key={voucher.id} className="carousel-item">
-              <VoucherCard voucher={voucher} onUse={handleUseVoucher} />
+              <VoucherCard voucher={voucher} />
             </div>
           ))}
         </Slider>
@@ -145,66 +147,53 @@ const Vouchers = () => {
     );
   };
 
-  const VoucherCard = ({ voucher, onUse }) => (
-    <div className="voucher-card">
-      <h3>{voucher.voucher} Voucher</h3>
-      <p className="price">Rp {voucher.price.toLocaleString("id-ID")}</p>
-      <p className="description">
-        Get Rp {voucher.price.toLocaleString("id-ID")} off on your{" "}
-        {voucher.category.toLowerCase()} order
-      </p>
-      <p className="min-purchase">
-        Minimum Purchase: Rp {voucher.minPurchase.toLocaleString("id-ID")}
-      </p>
-      <p className="valid-until">
-        Valid Until: {new Date(voucher.validUntil).toLocaleDateString("id-ID")}
-      </p>
-      <button className="use-button" onClick={() => onUse(voucher)}>
-        Use
-      </button>
-    </div>
-  );
-
   useEffect(() => {
     fetchVouchers();
   }, [fetchVouchers]);
+
+  const navigate = useNavigate();
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="vouchers-page">
+      <button className="back-icon-button" onClick={() => navigate(-1)}>
+        <FontAwesomeIcon icon={faArrowLeft} />
+      </button>
       <div className="vouchers-header">
         <div className="input-section">
-          <form className="input-vcode" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Enter Voucher Code"
-              value={voucherCode}
-              onChange={(e) => setVoucherCode(e.target.value)}
-            />
-            <button type="submit">Submit</button>
-          </form>
-          <button
-            className="info-button"
-            onClick={() => setShowCodeList(!showCodeList)}>
-            <FontAwesomeIcon icon={faInfoCircle} />
-          </button>
-        </div>
-
-        {showCodeList && (
-          <div className="code-list">
-            <h4>Available Voucher Codes:</h4>
-            <ul>
-              {filteredVouchers.map((voucher) => (
-                <li key={voucher.code}>
-                  {voucher.code} - {voucher.voucher} (
-                  {voucher.price.toLocaleString("id-ID")})
-                </li>
-              ))}
-            </ul>
+          <div className="input-container">
+            <form className="input-vcode" onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Enter Voucher Code"
+                value={voucherCode}
+                onChange={(e) => setVoucherCode(e.target.value)}
+              />
+              <button type="submit">Submit</button>
+            </form>
+            <button
+              className="info-button"
+              onClick={() => setShowCodeList(!showCodeList)}>
+              <FontAwesomeIcon icon={faInfoCircle} />
+            </button>
           </div>
-        )}
+
+          {showCodeList && (
+            <div className="code-list">
+              <h4>Available Voucher Codes:</h4>
+              <ul>
+                {filteredVouchers.map((voucher) => (
+                  <li key={voucher.code}>
+                    {voucher.code} - {voucher.voucher} (
+                    {voucher.price.toLocaleString("id-ID")})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="filter-buttons">
