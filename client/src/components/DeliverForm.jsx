@@ -39,10 +39,30 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
     e.preventDefault();
     if (!deliveryMarker) return;
 
+    // Ensure coordinates are in [lat, lon] format
+    const pickupCoordinates = Array.isArray(pickupLocation.position)
+      ? pickupLocation.position
+      : [0, 0];
+    const deliveryCoordinates = Array.isArray(deliveryMarker)
+      ? deliveryMarker
+      : [0, 0];
+
     navigate("/delivery-distance", {
       state: {
-        pickupLocation: pickupLocation.position,
-        deliveryLocation: deliveryMarker,
+        // For route calculations and map
+        pickupLocation: pickupCoordinates,
+        deliveryLocation: deliveryCoordinates,
+        // For history storage
+        locationData: {
+          pickupLocation: {
+            coordinates: pickupCoordinates,
+            address: pickupLocation.address,
+          },
+          deliveryLocation: {
+            coordinates: deliveryCoordinates,
+            address: inputValue,
+          },
+        },
       },
     });
   };
