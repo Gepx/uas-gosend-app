@@ -1,4 +1,4 @@
-const { History, Driver } = require("../models");
+const { History } = require("../models");
 
 exports.getHistoryDetails = async (req, res) => {
   try {
