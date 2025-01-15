@@ -58,6 +58,7 @@ const PickupForm = ({ onSubmit }) => {
     if (markerPosition && selectedPackageType && selectedWeight) {
       onSubmit({
         position: markerPosition,
+        address: inputValue,
         packageType: selectedPackageType,
         weight: selectedWeight,
       });
