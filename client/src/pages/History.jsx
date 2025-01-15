@@ -30,18 +30,7 @@ const History = () => {
 
   const handleCardClick = (delivery) => {
     console.log("Selected delivery:", delivery); // Debug log
-    // Parse location data
-    try {
-      const parsedDelivery = {
-        ...delivery,
-        pickupLocation: JSON.parse(delivery.pickupLocation),
-        deliveryLocation: JSON.parse(delivery.deliveryLocation),
-      };
-      setSelectedDelivery(parsedDelivery);
-    } catch (error) {
-      console.error("Error parsing delivery data:", error);
-      setSelectedDelivery(delivery);
-    }
+    setSelectedDelivery(delivery);
   };
 
   const closeModal = () => {
@@ -79,27 +68,11 @@ const History = () => {
             <div className="block-content">
               <div className="block-locations">
                 <p className="block-pickup">
-                  {(() => {
-                    try {
-                      const pickup = JSON.parse(delivery.pickupLocation);
-                      return pickup.address;
-                    } catch (e) {
-                      return "Unknown Location";
-                    }
-                  })()}
+                  {delivery.pickupLocation || "Unknown Location"}
                 </p>
                 <span className="block-arrow">↓</span>
                 <p className="block-delivery">
-                  {(() => {
-                    try {
-                      const delivery_loc = JSON.parse(
-                        delivery.deliveryLocation
-                      );
-                      return delivery_loc.address;
-                    } catch (e) {
-                      return "Unknown Location";
-                    }
-                  })()}
+                  {delivery.deliveryLocation || "Unknown Location"}
                 </p>
               </div>
               <div className="block-price">
@@ -131,26 +104,18 @@ const History = () => {
             onClick={(e) => e.stopPropagation()}>
             <div className="history-modal-left">
               <img
-                src={selectedDelivery.Driver?.profileImage || driverPlaceholder}
+                src={driverPlaceholder}
                 alt="Driver"
                 className="history-modal-driver-image"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = driverPlaceholder;
-                }}
               />
-              <h3>{selectedDelivery.Driver?.name || "Driver"}</h3>
+              <h3>{selectedDelivery.driverName || "Driver"}</h3>
               <p className="license-plate">
                 <strong>License Plate:</strong>{" "}
-                {selectedDelivery.Driver?.licensePlate || "N/A"}
+                {selectedDelivery.licensePlate || "N/A"}
               </p>
               <p className="motor-type">
                 <strong>Vehicle:</strong>{" "}
-                {selectedDelivery.Driver?.motorbikeType || "N/A"}
-              </p>
-              <p className="phone-number">
-                <strong>Phone:</strong>{" "}
-                {selectedDelivery.Driver?.phoneNumber || "N/A"}
+                {selectedDelivery.motorbikeType || "N/A"}
               </p>
             </div>
 
@@ -158,43 +123,43 @@ const History = () => {
               <div className="history-location-section">
                 <div className="history-pickup-info">
                   <strong>Pick-up:</strong>
-                  <p>
-                    {selectedDelivery.pickupLocation?.address ||
-                      "Unknown Location"}
-                  </p>
+                  <p>{selectedDelivery.pickupLocation || "Unknown Location"}</p>
                 </div>
                 <div className="history-delivery-info">
                   <strong>Delivery:</strong>
                   <p>
-                    {selectedDelivery.deliveryLocation?.address ||
-                      "Unknown Location"}
+                    {selectedDelivery.deliveryLocation || "Unknown Location"}
                   </p>
                 </div>
               </div>
 
               <div className="history-price-rating-section">
                 <div className="history-price-info">
-                  <strong>Price:</strong>
-                  <div className="price-details">
-                    {Number(selectedDelivery.originalPrice) !==
-                      Number(selectedDelivery.discountPrice) && (
-                      <span className="original-price">
+                  <div className="price-container">
+                    <strong>Price:</strong>
+                    <div className="price-details">
+                      {Number(selectedDelivery.originalPrice) !==
+                        Number(selectedDelivery.discountPrice) && (
+                        <span className="original-price">
+                          Rp{" "}
+                          {Number(
+                            selectedDelivery.originalPrice
+                          ).toLocaleString()}
+                        </span>
+                      )}
+                      <span
+                        className={
+                          Number(selectedDelivery.originalPrice) !==
+                          Number(selectedDelivery.discountPrice)
+                            ? "discounted-price"
+                            : ""
+                        }>
                         Rp{" "}
                         {Number(
-                          selectedDelivery.originalPrice
+                          selectedDelivery.discountPrice
                         ).toLocaleString()}
                       </span>
-                    )}
-                    <span
-                      className={
-                        Number(selectedDelivery.originalPrice) !==
-                        Number(selectedDelivery.discountPrice)
-                          ? "discounted-price"
-                          : ""
-                      }>
-                      Rp{" "}
-                      {Number(selectedDelivery.discountPrice).toLocaleString()}
-                    </span>
+                    </div>
                     {Number(selectedDelivery.discountPrice) >
                       Number(selectedDelivery.originalPrice) && (
                       <span className="tip-info">
@@ -209,23 +174,33 @@ const History = () => {
                   </div>
                 </div>
                 {selectedDelivery.rating && (
-                  <div className="history-rating-info">
-                    <strong>Rating:</strong>
-                    <div className="history-stars">
-                      {[...Array(5)].map((_, index) => (
-                        <span
-                          key={index}
-                          className={`star ${
-                            index < Math.floor(Number(selectedDelivery.rating))
-                              ? "filled"
-                              : ""
-                          }`}>
-                          ★
+                  <div
+                    className="history-rating-info"
+                    style={{ marginTop: "10px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}>
+                      <strong>Rating:</strong>
+                      <div className="history-stars">
+                        {[...Array(5)].map((_, index) => (
+                          <span
+                            key={index}
+                            className={`star ${
+                              index <
+                              Math.floor(Number(selectedDelivery.rating))
+                                ? "filled"
+                                : ""
+                            }`}>
+                            ★
+                          </span>
+                        ))}
+                        <span className="rating-number">
+                          ({Number(selectedDelivery.rating).toFixed(1)})
                         </span>
-                      ))}
-                      <span className="rating-number">
-                        ({Number(selectedDelivery.rating).toFixed(1)})
-                      </span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -237,21 +212,7 @@ const History = () => {
                   <p>{selectedDelivery.comment}</p>
                 </div>
               )}
-
-              <div className="history-modal-footer">
-                <span
-                  className={`status ${selectedDelivery.status.toLowerCase()}`}>
-                  {selectedDelivery.status}
-                </span>
-                <span className="date">
-                  {new Date(selectedDelivery.orderDate).toLocaleDateString()}
-                </span>
-              </div>
             </div>
-
-            <button className="history-modal-close" onClick={closeModal}>
-              ×
-            </button>
           </div>
         </div>
       )}
