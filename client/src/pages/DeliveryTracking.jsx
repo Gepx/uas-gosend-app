@@ -28,8 +28,14 @@ const customDriverIcon = new L.Icon({
 const DeliveryTracking = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { pickupLocation, deliveryLocation, price, originalPrice } =
-    location.state || {};
+  const {
+    pickupLocation,
+    deliveryLocation,
+    pickupAddress,
+    deliveryAddress,
+    price,
+    originalPrice,
+  } = location.state || {};
 
   // Redirect if no location data
   useEffect(() => {
@@ -99,16 +105,12 @@ const DeliveryTracking = () => {
 
   // Initialize driver's position and fetch initial route
   useEffect(() => {
-    // Validate coordinates
     if (!pickupLocation || !deliveryLocation) {
-      console.error("Missing coordinates:", {
-        pickupLocation,
-        deliveryLocation,
-      });
+      navigate("/");
       return;
     }
 
-    // Ensure coordinates are arrays with numbers
+    // Validate coordinates
     const validateCoords = (coords) => {
       if (!Array.isArray(coords)) {
         console.error("Coordinates must be an array:", coords);
@@ -130,6 +132,7 @@ const DeliveryTracking = () => {
         pickupLocation,
         deliveryLocation,
       });
+      navigate("/");
       return;
     }
 
@@ -152,7 +155,7 @@ const DeliveryTracking = () => {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [pickupLocation, deliveryLocation]);
+  }, [pickupLocation, deliveryLocation, navigate]);
 
   // Animate driver's movement along the route
   useEffect(() => {
@@ -215,6 +218,11 @@ const DeliveryTracking = () => {
 
   const handleRatingSubmit = async ({ rating, comment, tip }) => {
     try {
+      if (!selectedDriver) {
+        toast.error("Driver information is missing");
+        return;
+      }
+
       // Calculate final prices
       const finalOriginalPrice = originalPrice || price || 0;
       const finalDiscountPrice = price || 0;
@@ -223,34 +231,17 @@ const DeliveryTracking = () => {
       // Create the history record
       const historyData = {
         userId: 1, // Using the test user's ID
-        driverId: selectedDriver?.id,
-        pickupLocation: JSON.stringify({
-          address:
-            pickupLocation?.address ||
-            pickupLocation?.name ||
-            "Unknown Location",
-          coordinates: [pickupLocation[0], pickupLocation[1]],
-        }),
-        deliveryLocation: JSON.stringify({
-          address:
-            deliveryLocation?.address ||
-            deliveryLocation?.name ||
-            "Unknown Location",
-          coordinates: [deliveryLocation[0], deliveryLocation[1]],
-        }),
+        driverId: selectedDriver.id,
+        driverName: selectedDriver.name,
+        licensePlate: selectedDriver.licensePlate,
+        motorbikeType: selectedDriver.motorbikeType,
+        pickupLocation: location.state?.pickupAddress || "Unknown Location",
+        deliveryLocation: location.state?.deliveryAddress || "Unknown Location",
         originalPrice: finalOriginalPrice,
         discountPrice: totalPrice, // Include tip in final price
         rating,
         comment,
         status: "completed",
-        Driver: {
-          id: selectedDriver?.id,
-          name: selectedDriver?.name,
-          licensePlate: selectedDriver?.licensePlate,
-          motorbikeType: selectedDriver?.motorbikeType,
-          phoneNumber: selectedDriver?.phoneNumber,
-          profileImage: selectedDriver?.avatar,
-        },
       };
 
       console.log("Saving history with data:", historyData); // Debug log
@@ -266,34 +257,22 @@ const DeliveryTracking = () => {
 
   const handleSkipRating = async () => {
     try {
+      if (!selectedDriver) {
+        toast.error("Driver information is missing");
+        return;
+      }
+
       const historyData = {
         userId: 1, // Using the test user's ID
-        driverId: selectedDriver?.id,
-        pickupLocation: JSON.stringify({
-          address:
-            pickupLocation?.address ||
-            pickupLocation?.name ||
-            "Unknown Location",
-          coordinates: [pickupLocation[0], pickupLocation[1]],
-        }),
-        deliveryLocation: JSON.stringify({
-          address:
-            deliveryLocation?.address ||
-            deliveryLocation?.name ||
-            "Unknown Location",
-          coordinates: [deliveryLocation[0], deliveryLocation[1]],
-        }),
+        driverId: selectedDriver.id,
+        driverName: selectedDriver.name,
+        licensePlate: selectedDriver.licensePlate,
+        motorbikeType: selectedDriver.motorbikeType,
+        pickupLocation: location.state?.pickupAddress || "Unknown Location",
+        deliveryLocation: location.state?.deliveryAddress || "Unknown Location",
         originalPrice: originalPrice || price || 0,
         discountPrice: price || 0,
         status: "completed",
-        Driver: {
-          id: selectedDriver?.id,
-          name: selectedDriver?.name,
-          licensePlate: selectedDriver?.licensePlate,
-          motorbikeType: selectedDriver?.motorbikeType,
-          phoneNumber: selectedDriver?.phoneNumber,
-          profileImage: selectedDriver?.avatar,
-        },
       };
 
       console.log("Saving history with data:", historyData); // Debug log
@@ -328,10 +307,10 @@ const DeliveryTracking = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         <Marker position={pickupLocation}>
-          <Popup>Pickup Location</Popup>
+          <Popup>{pickupAddress || "Pickup Location"}</Popup>
         </Marker>
         <Marker position={deliveryLocation}>
-          <Popup>Delivery Location</Popup>
+          <Popup>{deliveryAddress || "Delivery Location"}</Popup>
         </Marker>
         {driverPosition && (
           <>
@@ -363,6 +342,18 @@ const DeliveryTracking = () => {
           margin: "20px 0",
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         }}>
+        {/* <div className="location-info" style={{ marginBottom: "15px" }}>
+          <div
+            className="location-detail"
+            style={{ margin: "4px 0", color: "#666" }}>
+            <strong>Pickup:</strong> {pickupAddress || "Unknown Location"}
+          </div>
+          <div
+            className="location-detail"
+            style={{ margin: "4px 0", color: "#666" }}>
+            <strong>Delivery:</strong> {deliveryAddress || "Unknown Location"}
+          </div>
+        </div> */}
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <img
             src={selectedDriver?.avatar || driverPlaceholder}
