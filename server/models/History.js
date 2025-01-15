@@ -21,19 +21,25 @@ module.exports = (sequelize, DataTypes) => {
         key: "id",
       },
     },
-    pickupLocation: {
+    driverName: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        len: [2, 100],
-      },
+    },
+    licensePlate: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    motorbikeType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    pickupLocation: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     deliveryLocation: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
-      validate: {
-        len: [2, 100],
-      },
     },
     originalPrice: {
       type: DataTypes.DECIMAL(10, 2),
@@ -72,5 +78,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.NOW,
     },
   });
+
   return History;
 };
