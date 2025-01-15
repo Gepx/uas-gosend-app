@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -37,23 +37,52 @@ const DeliveryDistance = () => {
     return Math.ceil(price / 500) * 500;
   };
 
+  // Validate coordinates
+  const validateCoordinates = (coords) => {
+    return (
+      Array.isArray(coords) &&
+      coords.length === 2 &&
+      !isNaN(coords[0]) &&
+      !isNaN(coords[1])
+    );
+  };
+
   // Redirect if no locations are provided
   useEffect(() => {
-    if (!pickupLocation || !deliveryLocation) {
+    if (
+      !pickupLocation ||
+      !deliveryLocation ||
+      !validateCoordinates(pickupLocation) ||
+      !validateCoordinates(deliveryLocation)
+    ) {
       navigate("/");
       return;
     }
   }, [pickupLocation, deliveryLocation, navigate]);
 
-  const bounds =
-    pickupLocation && deliveryLocation
-      ? [pickupLocation, deliveryLocation]
-      : null;
+  const bounds = useMemo(() => {
+    if (
+      !pickupLocation ||
+      !deliveryLocation ||
+      !validateCoordinates(pickupLocation) ||
+      !validateCoordinates(deliveryLocation)
+    ) {
+      return null;
+    }
+    return [pickupLocation, deliveryLocation];
+  }, [pickupLocation, deliveryLocation]);
 
   // Fetch route and calculate initial price
   useEffect(() => {
     const fetchRoute = async () => {
-      if (!pickupLocation || !deliveryLocation) return;
+      if (
+        !pickupLocation ||
+        !deliveryLocation ||
+        !validateCoordinates(pickupLocation) ||
+        !validateCoordinates(deliveryLocation)
+      ) {
+        return;
+      }
 
       try {
         setIsLoading(true);
@@ -142,8 +171,14 @@ const DeliveryDistance = () => {
     setShowConfirm(false);
     navigate("/delivery-tracking", {
       state: {
-        pickupLocation,
-        deliveryLocation,
+        // For map display and route calculation
+        pickupLocation: location.state.locationData.pickupLocation.coordinates,
+        deliveryLocation:
+          location.state.locationData.deliveryLocation.coordinates,
+        // For history
+        pickupAddress: location.state.locationData.pickupLocation.address,
+        deliveryAddress: location.state.locationData.deliveryLocation.address,
+        // Price info
         price,
         originalPrice: appliedVoucher ? originalPrice : price,
       },
