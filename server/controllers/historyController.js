@@ -3,34 +3,12 @@ const { History, Driver } = require("../models");
 exports.getHistoryDetails = async (req, res) => {
   try {
     const histories = await History.findAll({
-      include: [
-        {
-          model: Driver,
-          attributes: [
-            "id",
-            "name",
-            "profileImage",
-            "licensePlate",
-            "motorbikeType",
-            "phoneNumber",
-          ],
-        },
-      ],
       order: [["orderDate", "DESC"]],
     });
 
-    // Parse JSON strings for locations
+    // No need to parse locations anymore since they're just strings
     const parsedHistories = histories.map((history) => {
-      const plainHistory = history.get({ plain: true });
-      try {
-        plainHistory.pickupLocation = JSON.parse(plainHistory.pickupLocation);
-        plainHistory.deliveryLocation = JSON.parse(
-          plainHistory.deliveryLocation
-        );
-      } catch (e) {
-        console.error("Error parsing location data:", e);
-      }
-      return plainHistory;
+      return history.get({ plain: true });
     });
 
     res.json(parsedHistories);
@@ -47,6 +25,9 @@ exports.createHistory = async (req, res) => {
     const {
       userId,
       driverId,
+      driverName,
+      licensePlate,
+      motorbikeType,
       pickupLocation,
       deliveryLocation,
       originalPrice,
@@ -63,13 +44,19 @@ exports.createHistory = async (req, res) => {
       !pickupLocation ||
       !deliveryLocation ||
       !originalPrice ||
-      !discountPrice
+      !discountPrice ||
+      !driverName ||
+      !licensePlate ||
+      !motorbikeType
     ) {
       return res.status(400).json({
         message: "Missing required fields",
         required: [
           "userId",
           "driverId",
+          "driverName",
+          "licensePlate",
+          "motorbikeType",
           "pickupLocation",
           "deliveryLocation",
           "originalPrice",
@@ -81,14 +68,11 @@ exports.createHistory = async (req, res) => {
     const history = await History.create({
       userId,
       driverId,
-      pickupLocation:
-        typeof pickupLocation === "string"
-          ? pickupLocation
-          : JSON.stringify(pickupLocation),
-      deliveryLocation:
-        typeof deliveryLocation === "string"
-          ? deliveryLocation
-          : JSON.stringify(deliveryLocation),
+      driverName,
+      licensePlate,
+      motorbikeType,
+      pickupLocation,
+      deliveryLocation,
       originalPrice,
       discountPrice,
       rating,
@@ -97,33 +81,7 @@ exports.createHistory = async (req, res) => {
       orderDate: new Date(),
     });
 
-    // Fetch the created history with driver details
-    const historyWithDriver = await History.findByPk(history.id, {
-      include: [
-        {
-          model: Driver,
-          attributes: [
-            "id",
-            "name",
-            "profileImage",
-            "licensePlate",
-            "motorbikeType",
-            "phoneNumber",
-          ],
-        },
-      ],
-    });
-
-    // Parse JSON strings for response
-    const plainHistory = historyWithDriver.get({ plain: true });
-    try {
-      plainHistory.pickupLocation = JSON.parse(plainHistory.pickupLocation);
-      plainHistory.deliveryLocation = JSON.parse(plainHistory.deliveryLocation);
-    } catch (e) {
-      console.error("Error parsing location data:", e);
-    }
-
-    res.status(201).json(plainHistory);
+    res.status(201).json(history.get({ plain: true }));
   } catch (error) {
     console.error("Error creating history:", error);
     res
@@ -148,33 +106,7 @@ exports.updateHistory = async (req, res) => {
       status,
     });
 
-    // Fetch the updated history with driver details
-    const updatedHistory = await History.findByPk(id, {
-      include: [
-        {
-          model: Driver,
-          attributes: [
-            "id",
-            "name",
-            "profileImage",
-            "licensePlate",
-            "motorbikeType",
-            "phoneNumber",
-          ],
-        },
-      ],
-    });
-
-    // Parse JSON strings for response
-    const plainHistory = updatedHistory.get({ plain: true });
-    try {
-      plainHistory.pickupLocation = JSON.parse(plainHistory.pickupLocation);
-      plainHistory.deliveryLocation = JSON.parse(plainHistory.deliveryLocation);
-    } catch (e) {
-      console.error("Error parsing location data:", e);
-    }
-
-    res.json(plainHistory);
+    res.json(history.get({ plain: true }));
   } catch (error) {
     console.error("Error updating history:", error);
     res
