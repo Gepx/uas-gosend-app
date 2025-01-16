@@ -50,7 +50,8 @@ db.Address = require("./address.js")(sequelize, DataTypes);
 db.Driver = require("./driver.js")(sequelize, DataTypes);
 db.History = require("./history.js")(sequelize, DataTypes);
 db.User = require("./user.js")(sequelize, DataTypes);
-db.Voucher = require("./voucher.js")(sequelize, DataTypes);
+db.GlobalVoucher = require("./globalVoucher.js")(sequelize, DataTypes);
+db.UserVoucher = require("./userVoucher.js")(sequelize, DataTypes);
 
 // Define associations
 db.User.hasMany(db.History);
@@ -59,12 +60,15 @@ db.History.belongsTo(db.User);
 db.Driver.hasMany(db.History);
 db.History.belongsTo(db.Driver);
 
-// Corrected User associations
 db.User.hasMany(db.Address);
 db.Address.belongsTo(db.User);
 
-db.User.hasMany(db.Voucher);
-db.Voucher.belongsTo(db.User);
+// Voucher associations
+db.User.hasMany(db.UserVoucher);
+db.UserVoucher.belongsTo(db.User);
+
+db.GlobalVoucher.hasMany(db.UserVoucher);
+db.UserVoucher.belongsTo(db.GlobalVoucher);
 
 initializeDatabase();
 
