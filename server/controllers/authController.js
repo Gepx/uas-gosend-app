@@ -49,6 +49,7 @@ const login = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
@@ -62,7 +63,7 @@ const login = async (req, res) => {
 
 const signup = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, isAdmin } = req.body;
 
     // Check if username or email already exists
     const existingUser = await User.findOne({
@@ -84,11 +85,12 @@ const signup = async (req, res) => {
     // Hash password with bcrypt (10 rounds)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new user (isAdmin will default to false)
+    // Create new user with isAdmin field if provided
     const user = await User.create({
       username,
       email,
       password: hashedPassword,
+      isAdmin: isAdmin || false, // Use provided value or default to false
     });
 
     // Generate JWT token
