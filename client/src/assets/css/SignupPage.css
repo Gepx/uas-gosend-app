@@ -17,6 +17,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: linear-gradient(135deg, #ff6a00, #ee0979);
+  color: white;
+  text-align: center;
 }
 
 .signup-right {
@@ -39,6 +42,10 @@ body {
   font-size: 1.5rem;
 }
 
+.signup-form button {
+  transition: background-color 0.3s, transform 0.2s;
+}
+
 .input-group {
   margin-bottom: 1rem;
   position: relative;
@@ -47,6 +54,7 @@ body {
 .input-with-icon {
   display: flex;
   align-items: center;
+  border-radius: 5px;
 }
 
 .input-with-icon .icon {
@@ -105,6 +113,8 @@ body {
   cursor: pointer;
   margin-top: 0.5rem;
   font-size: 0.9rem;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  border: none;
 }
 
 .signup-form button:hover {
