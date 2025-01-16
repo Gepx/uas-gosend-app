@@ -12,6 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import VoucherCard from "../components/VoucherCard";
+import { toast } from "react-hot-toast";
+import voucherService from "../services/voucherService";
 
 const Vouchers = () => {
   const selectedCategory = useVoucherStore((state) => state.selectedCategory);
@@ -24,12 +26,14 @@ const Vouchers = () => {
     setVoucherCode,
     submitVoucherCode,
     fetchVouchers,
+    claimVoucher,
     loading,
     error,
   } = useVoucherStore();
 
   const [showCodeList, setShowCodeList] = useState(false);
   const [userVouchers, setUserVouchers] = useState([]);
+  const [loadingUserVouchers, setLoadingUserVouchers] = useState(false);
 
   const filteredVouchers = useMemo(
     () => getFilteredVouchers(),
@@ -44,7 +48,9 @@ const Vouchers = () => {
   const filteredUserVouchers = useMemo(() => {
     return selectedCategory === "All"
       ? userVouchers
-      : userVouchers.filter((voucher) => voucher.category === selectedCategory);
+      : userVouchers.filter(
+          (voucher) => voucher.globalVoucher.category === selectedCategory
+        );
   }, [userVouchers, selectedCategory]);
 
   const categories = ["All", "Food", "Car", "Bike"];
@@ -73,28 +79,38 @@ const Vouchers = () => {
     ],
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const foundVoucher = filteredVouchers.find(
-      (v) => v.code.toLowerCase() === voucherCode.toLowerCase()
-    );
-
-    if (foundVoucher) {
-      if (
-        !userVouchers.some(
-          (v) => v.code.toLowerCase() === voucherCode.toLowerCase()
-        )
-      ) {
-        setUserVouchers([...userVouchers, foundVoucher]);
-        alert("Congratulations! You've successfully claimed the voucher!");
-      } else {
-        alert("You've already claimed this voucher!");
-      }
-    } else {
-      alert("Sorry, the voucher code is invalid or expired.");
+    if (!voucherCode.trim()) {
+      toast.error("Please enter a voucher code");
+      return;
     }
 
-    submitVoucherCode();
+    try {
+      await claimVoucher(voucherCode);
+      toast.success("Voucher claimed successfully!");
+      submitVoucherCode();
+      // Refresh user vouchers after claiming
+      fetchUserVouchers();
+    } catch (error) {
+      // Display the error message from the API response
+      toast.error(error.message || "Failed to claim voucher");
+      // Clear the voucher code input
+      setVoucherCode("");
+    }
+  };
+
+  const fetchUserVouchers = async () => {
+    setLoadingUserVouchers(true);
+    try {
+      const data = await voucherService.getUserVouchers();
+      setUserVouchers(data);
+    } catch (error) {
+      console.error("Error fetching user vouchers:", error);
+      toast.error("Failed to fetch your vouchers");
+    } finally {
+      setLoadingUserVouchers(false);
+    }
   };
 
   const handleUseVoucher = (voucher) => {
@@ -102,6 +118,10 @@ const Vouchers = () => {
   };
 
   const renderVouchers = () => {
+    if (loadingUserVouchers) {
+      return <div>Loading your vouchers...</div>;
+    }
+
     if (userVouchers.length === 0) {
       return (
         <div className="no-vouchers">
@@ -128,7 +148,13 @@ const Vouchers = () => {
       return (
         <div className="vouchers-grid">
           {vouchersToShow.map((voucher) => (
-            <VoucherCard key={voucher.id} voucher={voucher} />
+            <VoucherCard
+              key={voucher.id}
+              voucher={voucher.globalVoucher}
+              isUsed={voucher.isUsed}
+              claimedAt={voucher.claimedAt}
+              userVoucherId={voucher.id}
+            />
           ))}
         </div>
       );
@@ -139,7 +165,12 @@ const Vouchers = () => {
         <Slider {...sliderSettings}>
           {vouchersToShow.map((voucher) => (
             <div key={voucher.id} className="carousel-item">
-              <VoucherCard voucher={voucher} />
+              <VoucherCard
+                voucher={voucher.globalVoucher}
+                isUsed={voucher.isUsed}
+                claimedAt={voucher.claimedAt}
+                userVoucherId={voucher.id}
+              />
             </div>
           ))}
         </Slider>
@@ -149,6 +180,7 @@ const Vouchers = () => {
 
   useEffect(() => {
     fetchVouchers();
+    fetchUserVouchers();
   }, [fetchVouchers]);
 
   const navigate = useNavigate();
@@ -171,7 +203,9 @@ const Vouchers = () => {
                 value={voucherCode}
                 onChange={(e) => setVoucherCode(e.target.value)}
               />
-              <button type="submit">Submit</button>
+              <button type="submit" disabled={loading}>
+                {loading ? "Claiming..." : "Submit"}
+              </button>
             </form>
             <button
               className="info-button"
