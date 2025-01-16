@@ -64,6 +64,32 @@ const useVoucherStore = create(
         }
       },
 
+      claimVoucher: async (code) => {
+        set({ loading: true });
+        try {
+          const response = await voucherService.claimVoucher(code);
+          const { voucher } = response;
+          get().addUserVoucher(voucher);
+          set({ loading: false });
+          return response;
+        } catch (error) {
+          set({ error: error.message, loading: false });
+          throw error;
+        }
+      },
+
+      useVoucher: async (id) => {
+        set({ loading: true });
+        try {
+          const response = await voucherService.useVoucher(id);
+          set({ loading: false });
+          return response;
+        } catch (error) {
+          set({ error: error.message, loading: false });
+          throw error;
+        }
+      },
+
       getFilteredVouchers: () => {
         const { vouchers, selectedCategory } = get();
         if (selectedCategory === "All") return vouchers;
