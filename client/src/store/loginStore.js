@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import useAuthStore from "./authStore";
 
 // Configure axios
 const api = axios.create({
@@ -17,8 +18,6 @@ const useLoginStore = create((set) => ({
   },
   errors: {},
   isLoading: false,
-  user: null,
-  token: localStorage.getItem("token"),
 
   // Actions
   setUsername: (username) =>
@@ -55,13 +54,11 @@ const useLoginStore = create((set) => ({
 
       const { token, user } = response.data;
 
-      // Save token to localStorage
-      localStorage.setItem("token", token);
+      // Update auth store
+      useAuthStore.getState().setAuth(token, user);
 
-      // Update state
+      // Reset form
       set({
-        user,
-        token,
         isLoading: false,
         form: { username: "", password: "" },
       });
@@ -78,17 +75,6 @@ const useLoginStore = create((set) => ({
       });
       return false;
     }
-  },
-
-  // Logout function
-  logout: () => {
-    localStorage.removeItem("token");
-    set({
-      user: null,
-      token: null,
-      form: { username: "", password: "" },
-      errors: {},
-    });
   },
 
   // Reset form
