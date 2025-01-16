@@ -1,5 +1,3 @@
-// import AuthPage from "./pages/AuthPage";
-// import SignupPage from "./components/SignupPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
@@ -15,6 +13,7 @@ import EditDriver from "./pages/EditDriver";
 import DeliveryDistance from "./pages/DeliveryDistance";
 import DeliveryTracking from "./pages/DeliveryTracking";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -22,20 +21,93 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/delivery-distance" element={<DeliveryDistance />} />
-          <Route path="/vouchers" element={<Vouchers />} />
-          <Route path="/saved-address" element={<SavedAddress />} />
-          <Route path="/add-driver" element={<AddDriver />} />
-          <Route path="/edit-driver/:id" element={<EditDriver />} />
-          <Route path="/add-address" element={<AddAddress />} />
-          <Route path="/edit-address/:id" element={<EditAddress />} />
-          <Route path="/history" element={<History />} />
           <Route path="/auth" element={<AuthPage />} />
-          <Route path="/drivers" element={<Drivers />} />
-          <Route path="/delivery-tracking" element={<DeliveryTracking />} />
-          {/* <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} /> */}
+
+          {/* Protected routes for logged-in users */}
+          <Route
+            path="/delivery-distance"
+            element={
+              <ProtectedRoute>
+                <DeliveryDistance />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vouchers"
+            element={
+              <ProtectedRoute>
+                <Vouchers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/saved-address"
+            element={
+              <ProtectedRoute>
+                <SavedAddress />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-address"
+            element={
+              <ProtectedRoute>
+                <AddAddress />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-address/:id"
+            element={
+              <ProtectedRoute>
+                <EditAddress />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <History />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-tracking"
+            element={
+              <ProtectedRoute>
+                <DeliveryTracking />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin-only routes */}
+          <Route
+            path="/drivers"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <Drivers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-driver"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AddDriver />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-driver/:id"
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <EditDriver />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Toaster
           position="top-right"
