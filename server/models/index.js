@@ -59,11 +59,12 @@ db.History.belongsTo(db.User);
 db.Driver.hasMany(db.History);
 db.History.belongsTo(db.Driver);
 
-db.Address.hasMany(db.User);
-db.User.belongsTo(db.Address);
+// Corrected User associations
+db.User.hasMany(db.Address);
+db.Address.belongsTo(db.User);
 
-db.Voucher.hasMany(db.User);
-db.User.belongsTo(db.Voucher);
+db.User.hasMany(db.Voucher);
+db.Voucher.belongsTo(db.User);
 
 initializeDatabase();
 
