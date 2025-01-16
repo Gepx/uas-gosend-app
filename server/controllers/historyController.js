@@ -3,6 +3,7 @@ const { History } = require("../models");
 exports.getHistoryDetails = async (req, res) => {
   try {
     const histories = await History.findAll({
+      where: { userId: req.user.id },
       order: [["orderDate", "DESC"]],
     });
 
@@ -23,7 +24,6 @@ exports.getHistoryDetails = async (req, res) => {
 exports.createHistory = async (req, res) => {
   try {
     const {
-      userId,
       driverId,
       driverName,
       licensePlate,
@@ -39,7 +39,6 @@ exports.createHistory = async (req, res) => {
 
     // Validate required fields
     if (
-      !userId ||
       !driverId ||
       !pickupLocation ||
       !deliveryLocation ||
@@ -52,7 +51,6 @@ exports.createHistory = async (req, res) => {
       return res.status(400).json({
         message: "Missing required fields",
         required: [
-          "userId",
           "driverId",
           "driverName",
           "licensePlate",
@@ -66,7 +64,7 @@ exports.createHistory = async (req, res) => {
     }
 
     const history = await History.create({
-      userId,
+      userId: req.user.id,
       driverId,
       driverName,
       licensePlate,
@@ -95,7 +93,10 @@ exports.updateHistory = async (req, res) => {
     const { id } = req.params;
     const { rating, comment, status } = req.body;
 
-    const history = await History.findByPk(id);
+    const history = await History.findOne({
+      where: { id: id, userId: req.user.id },
+    });
+
     if (!history) {
       return res.status(404).json({ message: "History not found" });
     }

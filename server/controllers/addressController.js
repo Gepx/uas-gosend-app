@@ -1,10 +1,12 @@
 const { Address } = require("../models");
 
 const addressController = {
-  // Get all addresses
+  // Get all addresses for the current user
   getAllAddresses: async (req, res) => {
     try {
-      const addresses = await Address.findAll();
+      const addresses = await Address.findAll({
+        where: { userId: req.user.id },
+      });
       res.json(addresses);
     } catch (error) {
       res
@@ -13,10 +15,13 @@ const addressController = {
     }
   },
 
-  // Create new address
+  // Create new address for the current user
   createAddress: async (req, res) => {
     try {
-      const newAddress = await Address.create(req.body);
+      const newAddress = await Address.create({
+        ...req.body,
+        userId: req.user.id,
+      });
       res.status(201).json(newAddress);
     } catch (error) {
       res
@@ -25,18 +30,20 @@ const addressController = {
     }
   },
 
-  // Update address
+  // Update address for the current user
   updateAddress: async (req, res) => {
     try {
       const { id } = req.params;
-      const updated = await Address.update(req.body, {
-        where: { id: id },
+      const address = await Address.findOne({
+        where: { id: id, userId: req.user.id },
       });
-      if (updated[0] === 0) {
+
+      if (!address) {
         return res.status(404).json({ message: "Address not found" });
       }
-      const updatedAddress = await Address.findByPk(id);
-      res.json(updatedAddress);
+
+      await address.update(req.body);
+      res.json(address);
     } catch (error) {
       res
         .status(400)
@@ -44,12 +51,12 @@ const addressController = {
     }
   },
 
-  // Delete address
+  // Delete address for the current user
   deleteAddress: async (req, res) => {
     try {
       const { id } = req.params;
       const deleted = await Address.destroy({
-        where: { id: id },
+        where: { id: id, userId: req.user.id },
       });
       if (!deleted) {
         return res.status(404).json({ message: "Address not found" });
