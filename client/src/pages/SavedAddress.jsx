@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAddressStore from "../store/addressStore";
+import usePickupStore from "../store/pickupStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLocationDot,
@@ -8,10 +9,12 @@ import {
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import "../assets/css/SavedAddress.css";
+import { toast } from "react-hot-toast";
 
 const SavedAddress = () => {
   const navigate = useNavigate();
   const { addresses, deleteAddress, fetchAddresses } = useAddressStore();
+  const setPickupAddress = usePickupStore((state) => state.setPickupAddress);
   const [activeMenu, setActiveMenu] = useState(null);
 
   useEffect(() => {
@@ -35,8 +38,9 @@ const SavedAddress = () => {
   };
 
   const handleUseAddress = (address) => {
-    // Implement the logic to use this address
-    console.log("Using address:", address);
+    setPickupAddress(address);
+    toast.success("Pickup address selected!");
+    navigate("/");
   };
 
   return (
