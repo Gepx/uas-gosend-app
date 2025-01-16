@@ -1,5 +1,5 @@
 const db = require("../models");
-const Voucher = db.Voucher;
+const GlobalVoucher = db.GlobalVoucher;
 
 const voucherData = [
   // Food Vouchers
@@ -169,10 +169,16 @@ const voucherData = [
 
 const seedVouchers = async () => {
   try {
-    await Voucher.bulkCreate(voucherData);
-    console.log("Vouchers seeded successfully");
+    // Ensure all voucher codes are uppercase
+    const vouchersWithUpperCodes = voucherData.map((voucher) => ({
+      ...voucher,
+      code: voucher.code.toUpperCase(),
+    }));
+
+    await GlobalVoucher.bulkCreate(vouchersWithUpperCodes);
+    console.log("Global vouchers seeded successfully");
   } catch (error) {
-    console.error("Error seeding vouchers:", error);
+    console.error("Error seeding global vouchers:", error);
   }
 };
 
