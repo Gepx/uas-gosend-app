@@ -1,12 +1,10 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
+import api from "./api";
 
 const addressService = {
   // Get all addresses
   getAllAddresses: async () => {
     try {
-      const response = await axios.get(`${API_URL}/addresses`);
+      const response = await api.get("/addresses");
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -23,10 +21,7 @@ const addressService = {
         address: addressData.address,
         notes: addressData.notes,
       };
-      const response = await axios.post(
-        `${API_URL}/addresses`,
-        transformedData
-      );
+      const response = await api.post("/addresses", transformedData);
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -36,10 +31,7 @@ const addressService = {
   // Update address
   updateAddress: async (id, addressData) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/addresses/${id}`,
-        addressData
-      );
+      const response = await api.put(`/addresses/${id}`, addressData);
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -49,7 +41,7 @@ const addressService = {
   // Delete address
   deleteAddress: async (id) => {
     try {
-      const response = await axios.delete(`${API_URL}/addresses/${id}`);
+      const response = await api.delete(`/addresses/${id}`);
       return response.data;
     } catch (error) {
       throw error.response.data;

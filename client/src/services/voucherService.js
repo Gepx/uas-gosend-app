@@ -1,32 +1,51 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
+import api from "./api";
 
 const voucherService = {
   getAllVouchers: async () => {
     try {
-      const response = await axios.get(`${API_URL}/vouchers`);
+      const response = await api.get("/vouchers/admin/all");
       return response.data;
     } catch (error) {
-      throw error.response.data;
+      throw error.response?.data || { message: "Failed to fetch vouchers" };
     }
   },
 
-  getVoucher: async (id) => {
+  getUserVouchers: async () => {
     try {
-      const response = await axios.get(`${API_URL}/vouchers/${id}`);
+      const response = await api.get("/vouchers/user");
       return response.data;
     } catch (error) {
-      throw error.response.data;
+      throw (
+        error.response?.data || { message: "Failed to fetch user vouchers" }
+      );
     }
   },
 
-  createVoucher: async (voucherData) => {
+  claimVoucher: async (code) => {
     try {
-      const response = await axios.post(`${API_URL}/vouchers`, voucherData);
+      const response = await api.post("/vouchers/claim", { code });
       return response.data;
     } catch (error) {
-      throw error.response.data;
+      if (error.response?.status === 404) {
+        throw { message: "Invalid or expired voucher code" };
+      } else if (error.response?.status === 400) {
+        throw { message: "You have already claimed this voucher" };
+      }
+      throw error.response?.data || { message: "Failed to claim voucher" };
+    }
+  },
+
+  useVoucher: async (id) => {
+    try {
+      const response = await api.post(`/vouchers/use/${id}`);
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw { message: "Voucher not found or already used" };
+      } else if (error.response?.status === 400) {
+        throw { message: "Voucher has expired" };
+      }
+      throw error.response?.data || { message: "Failed to use voucher" };
     }
   },
 };

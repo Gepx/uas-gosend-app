@@ -1,12 +1,10 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
+import api from "./api";
 
 const historyService = {
   // Get all delivery history
   getAllHistory: async () => {
     try {
-      const response = await axios.get(`${API_URL}/history`);
+      const response = await api.get("/history");
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -16,7 +14,7 @@ const historyService = {
   // Add new delivery history
   addHistory: async (historyData) => {
     try {
-      const response = await axios.post(`${API_URL}/history`, historyData);
+      const response = await api.post("/history", historyData);
       return response.data;
     } catch (error) {
       throw error.response.data;
@@ -26,7 +24,7 @@ const historyService = {
   // Update delivery history (e.g., for rating and comments)
   updateHistory: async (id, historyData) => {
     try {
-      const response = await axios.put(`${API_URL}/history/${id}`, historyData);
+      const response = await api.put(`/history/${id}`, historyData);
       return response.data;
     } catch (error) {
       throw error.response.data;
