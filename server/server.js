@@ -6,48 +6,55 @@ const driverRoutes = require("./routes/driverRoutes");
 const voucherRoutes = require("./routes/voucherRoutes");
 const routeRoutes = require("./routes/routeRoutes");
 const historyRoutes = require("./routes/historyRoutes");
-const seedUser = require("./seeders/userSeeder");
+const authRoutes = require("./routes/authRoutes");
+
+const PORT = 5000;
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors()); // Simplified CORS for now
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error("Error:", err.stack);
   res.status(500).json({
+    success: false,
     message: "Internal Server Error",
     error: err.message,
   });
 });
 
-// Test connection and sync database
-db.sequelize
-  .authenticate()
-  .then(() => {
+// Initialize server function
+const initializeServer = async () => {
+  try {
+    // Test database connection
+    await db.sequelize.authenticate();
     console.log("Database connection has been established successfully.");
-    return db.sequelize.sync({ force: false });
-  })
-  .then(async () => {
+
+    // Sync database
+    await db.sequelize.sync({ force: false });
     console.log("Database synchronized successfully");
-    // Run seeders
-    await seedUser();
-  })
-  .catch((error) => {
-    console.error("Unable to connect to the database:", error);
-  });
 
-// Routes
-app.use("/api/addresses", addressRoutes);
-app.use("/api/drivers", driverRoutes);
-app.use("/api/vouchers", voucherRoutes);
-app.use("/api/routes", routeRoutes);
-app.use("/api/history", historyRoutes);
+    // Routes (after DB is connected)
+    app.use("/api/auth", authRoutes);
+    app.use("/api/addresses", addressRoutes);
+    app.use("/api/drivers", driverRoutes);
+    app.use("/api/vouchers", voucherRoutes);
+    app.use("/api/routes", routeRoutes);
+    app.use("/api/history", historyRoutes);
 
-const PORT = 5000;
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to initialize server:", error);
+    process.exit(1);
+  }
+};
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Start the server
+initializeServer();
