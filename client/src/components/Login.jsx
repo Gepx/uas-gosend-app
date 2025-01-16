@@ -1,29 +1,28 @@
 import { useState } from "react";
-import useStore from "../store/useStore.js";
+import { useNavigate } from "react-router-dom";
+import useLoginStore from "../store/loginStore.js";
 import "../assets/css/Login.css";
 
 const LoginPage = ({ onSwitchToSignup }) => {
-  const { username, password, errors, setUsername, setPassword, validate } =
-    useStore();
+  const navigate = useNavigate();
+  const {
+    form,
+    errors,
+    isLoading,
+    setUsername,
+    setPassword,
+    login,
+    resetForm,
+  } = useLoginStore();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    validate();
-    if (Object.keys(errors).length === 0) {
-      // Handle form submission logic here
+    const success = await login();
+    if (success) {
+      navigate("/"); // or wherever you want to redirect after login
     }
-  };
-
-  const isValid = (fieldName) => {
-    if (fieldName === "password") {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      return passwordRegex.test(password);
-    } else if (fieldName === "username") {
-      return username !== "";
-    }
-    return false;
   };
 
   return (
@@ -31,7 +30,7 @@ const LoginPage = ({ onSwitchToSignup }) => {
       <div className="login-left">
         <div className="login-form">
           <h2>Login</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} autoComplete="off">
             <div className="input-group">
               <label htmlFor="username">Username or Email</label>
               <div className="input-with-icon">
@@ -40,16 +39,12 @@ const LoginPage = ({ onSwitchToSignup }) => {
                   type="text"
                   id="username"
                   placeholder="Username or Email"
-                  value={username}
+                  value={form.username}
                   onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="off"
+                  disabled={isLoading}
                 />
-                {isValid("username") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
-              {errors.username && (
-                <span className="error">{errors.username}</span>
-              )}
             </div>
 
             <div className="input-group">
@@ -60,24 +55,25 @@ const LoginPage = ({ onSwitchToSignup }) => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="Password"
-                  value={password}
+                  value={form.password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  disabled={isLoading}
                 />
                 <i
                   className={`fas ${
                     showPassword ? "fa-eye-slash" : "fa-eye"
                   } toggle-password`}
                   onClick={() => setShowPassword(!showPassword)}></i>
-                {isValid("password") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
               {errors.password && (
                 <span className="error">{errors.password}</span>
               )}
             </div>
 
-            <button type="submit">Login</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
+            </button>
           </form>
           <div className="social-login">
             <p>Or login with:</p>
@@ -92,6 +88,7 @@ const LoginPage = ({ onSwitchToSignup }) => {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
+                resetForm();
                 onSwitchToSignup();
               }}>
               Sign Up
@@ -102,9 +99,9 @@ const LoginPage = ({ onSwitchToSignup }) => {
       <div className="login-right">
         <div className="content">
           <h1>Welcome Back!</h1>
-          <p>Login to access your account and continue where you left off.</p>
-          <img src="../images/welcome-back-image.jpg" alt="Welcome Back" />
-          {/* Add any animation or additional content here */}
+          <p>
+            Login to access your account and continue <br /> where you left off.
+          </p>
         </div>
       </div>
     </div>
