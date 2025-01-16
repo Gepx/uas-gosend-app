@@ -94,7 +94,11 @@ const Vouchers = () => {
       fetchUserVouchers();
     } catch (error) {
       // Display the error message from the API response
-      toast.error(error.message || "Failed to claim voucher");
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Failed to claim voucher";
+      toast.error(errorMessage);
       // Clear the voucher code input
       setVoucherCode("");
     }
@@ -186,7 +190,6 @@ const Vouchers = () => {
   const navigate = useNavigate();
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="vouchers-page">
