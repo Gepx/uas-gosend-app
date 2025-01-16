@@ -34,7 +34,7 @@ const initializeServer = async () => {
     await db.sequelize.authenticate();
     console.log("Database connection has been established successfully.");
 
-    // Sync database
+    // Sync database with force:false to preserve data
     await db.sequelize.sync({ force: false });
     console.log("Database synchronized successfully");
 
