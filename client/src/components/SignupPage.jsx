@@ -1,44 +1,32 @@
 import { useState } from "react";
-import useStore from "../store/useStore.js";
+import useSignupStore from "../store/signupStore.js";
 import "../assets/css/SignupPage.css";
 
 const SignupPage = ({ onSwitchToLogin }) => {
   const {
-    username,
-    email,
-    password,
-    confirmPassword,
+    form,
     errors,
+    isLoading,
     setUsername,
     setEmail,
     setPassword,
     setConfirmPassword,
-    validate,
-  } = useStore();
+    signup,
+    resetForm,
+  } = useSignupStore();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    validate();
-    if (Object.keys(errors).length === 0) {
-      // Handle form submission logic here
+    const success = await signup();
+    if (success) {
+      // Show success message or toast notification
+      alert("Account created successfully! Please login.");
+      // Switch to login page
+      resetForm();
+      onSwitchToLogin();
     }
-  };
-
-  const isValid = (fieldName) => {
-    if (fieldName === "password") {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-      return passwordRegex.test(password);
-    } else if (fieldName === "confirmPassword") {
-      return confirmPassword === password && confirmPassword !== "";
-    } else if (fieldName === "username") {
-      return username !== "";
-    } else if (fieldName === "email") {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    }
-    return false;
   };
 
   return (
@@ -47,14 +35,12 @@ const SignupPage = ({ onSwitchToLogin }) => {
         <div className="content">
           <h1>Welcome to Our Platform</h1>
           <p>Sign up now and join our community!</p>
-          <img src="../images/welcome-image.jpg" alt="Welcome" />
-          {/* Add any animation or additional content here */}
         </div>
       </div>
       <div className="signup-right">
         <div className="signup-form">
           <h2>Sign Up</h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} autoComplete="off">
             <div className="input-group">
               <label htmlFor="username">Username</label>
               <div className="input-with-icon">
@@ -63,12 +49,11 @@ const SignupPage = ({ onSwitchToLogin }) => {
                   type="text"
                   id="username"
                   placeholder="username"
-                  value={username}
+                  value={form.username}
                   onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="off"
+                  disabled={isLoading}
                 />
-                {isValid("username") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
               {errors.username && (
                 <span className="error">{errors.username}</span>
@@ -83,12 +68,11 @@ const SignupPage = ({ onSwitchToLogin }) => {
                   type="email"
                   id="email"
                   placeholder="example@email.com"
-                  value={email}
+                  value={form.email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="off"
+                  disabled={isLoading}
                 />
-                {isValid("email") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
               {errors.email && <span className="error">{errors.email}</span>}
             </div>
@@ -101,17 +85,16 @@ const SignupPage = ({ onSwitchToLogin }) => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="password"
-                  value={password}
+                  value={form.password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  disabled={isLoading}
                 />
                 <i
                   className={`fas ${
                     showPassword ? "fa-eye-slash" : "fa-eye"
                   } toggle-password`}
                   onClick={() => setShowPassword(!showPassword)}></i>
-                {isValid("password") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
               {errors.password && (
                 <span className="error">{errors.password}</span>
@@ -126,19 +109,20 @@ const SignupPage = ({ onSwitchToLogin }) => {
                   type={showPassword ? "text" : "password"}
                   id="confirmPassword"
                   placeholder="confirm password"
-                  value={confirmPassword}
+                  value={form.confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
+                  disabled={isLoading}
                 />
-                {isValid("confirmPassword") && (
-                  <i className="fas fa-check-circle valid-icon"></i>
-                )}
               </div>
               {errors.confirmPassword && (
                 <span className="error">{errors.confirmPassword}</span>
               )}
             </div>
 
-            <button type="submit">Create Account</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Creating Account..." : "Create Account"}
+            </button>
           </form>
           <div className="social-login">
             <p>Or sign up with:</p>
@@ -153,6 +137,7 @@ const SignupPage = ({ onSwitchToLogin }) => {
               href="#"
               onClick={(e) => {
                 e.preventDefault();
+                resetForm();
                 onSwitchToLogin();
               }}>
               Login
