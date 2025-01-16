@@ -73,7 +73,7 @@ const useVoucherStore = create(
           set({ loading: false });
           return response;
         } catch (error) {
-          set({ error: error.message, loading: false });
+          set({ loading: false });
           throw error;
         }
       },
