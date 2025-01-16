@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "../assets/css/PickupForm.css";
 import useLocationStore from "../store/locationStore";
 import usePackageStore from "../store/packageStore";
+import usePickupStore from "../store/pickupStore";
 
 const PickupForm = ({ onSubmit }) => {
   const {
@@ -28,15 +29,48 @@ const PickupForm = ({ onSubmit }) => {
     setWeight,
   } = usePackageStore();
 
-  useEffect(() => {
-    setInputValue("");
-    setSuggestions([]);
-    setMarkerPosition(null);
-    setMapCenter([0, 0]);
+  const pickupAddress = usePickupStore((state) => state.pickupAddress);
 
+  useEffect(() => {
+    const searchAndUpdateMap = async (address) => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?` +
+            new URLSearchParams({
+              q: address,
+              format: "json",
+              countrycodes: "id",
+              limit: 1,
+              addressdetails: 1,
+            })
+        );
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+          const location = data[0];
+          const lat = parseFloat(location.lat);
+          const lon = parseFloat(location.lon);
+          setMapCenter([lat, lon]);
+          setMarkerPosition([lat, lon]);
+        }
+      } catch (error) {
+        console.error("Error searching location:", error);
+      }
+    };
+
+    if (pickupAddress) {
+      setInputValue(pickupAddress);
+      // Immediately search and update map for the saved address
+      searchAndUpdateMap(pickupAddress);
+    } else {
+      setInputValue("");
+      setSuggestions([]);
+      setMarkerPosition(null);
+      setMapCenter([0, 0]);
+    }
     setPackageType("");
     setWeight("");
-  }, []);
+  }, [pickupAddress]);
 
   const handleInputChange = async (event) => {
     const query = event.target.value;
@@ -137,6 +171,7 @@ const PickupForm = ({ onSubmit }) => {
           </div>
           <div className="send-map">
             <MapContainer
+              key={mapCenter.join(",")}
               center={mapCenter}
               zoom={13}
               className="map-container"
