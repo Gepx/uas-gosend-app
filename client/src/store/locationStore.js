@@ -27,7 +27,7 @@ const useLocationStore = create((set) => {
       console.error("Error fetching suggestions:", error);
       set({ suggestions: [] });
     }
-  }, 500);
+  }, 300);
 
   return {
     inputValue: "",
@@ -35,17 +35,18 @@ const useLocationStore = create((set) => {
     mapCenter: [3.5952, 98.6722],
     markerPosition: null,
 
-    setInputValue: (value) => {
-      set({ inputValue: value });
-      if (!value) {
-        set({ suggestions: [] });
-      }
-    },
+    setInputValue: (value) => set({ inputValue: value }),
     setSuggestions: (suggestions) => set({ suggestions }),
     setMapCenter: (center) => set({ mapCenter: center }),
     setMarkerPosition: (position) => set({ markerPosition: position }),
 
-    fetchSuggestions: debouncedFetch,
+    fetchSuggestions: (query) => {
+      if (query) {
+        debouncedFetch(query);
+      } else {
+        set({ suggestions: [] });
+      }
+    },
 
     clearSuggestions: () => set({ suggestions: [] }),
   };
