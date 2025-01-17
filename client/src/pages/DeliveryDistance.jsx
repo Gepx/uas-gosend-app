@@ -26,8 +26,13 @@ const DeliveryDistance = () => {
   const [price, setPrice] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
-  const { appliedVoucher, setDeliveryCost, removeVoucher, resetVoucherState } =
-    useVoucherStore();
+  const {
+    appliedVoucher,
+    setDeliveryCost,
+    removeVoucher,
+    resetVoucherState,
+    applyVoucher,
+  } = useVoucherStore();
 
   // Price calculation constants
   const BASE_PRICE = 8000;
@@ -72,7 +77,7 @@ const DeliveryDistance = () => {
     return [pickupLocation, deliveryLocation];
   }, [pickupLocation, deliveryLocation]);
 
-  // Fetch route and calculate initial price
+  // Combined effect to handle route fetching and price calculations
   useEffect(() => {
     const fetchRoute = async () => {
       if (
@@ -112,9 +117,27 @@ const DeliveryDistance = () => {
         const distanceInKm = data.route.distance / 1000;
         const calculatedPrice = BASE_PRICE + distanceInKm * PRICE_PER_KM;
         const roundedPrice = roundPrice(calculatedPrice);
+
         setOriginalPrice(roundedPrice);
-        setPrice(roundedPrice);
-        setDeliveryCost(roundedPrice);
+        setDeliveryCost(roundedPrice); // Set original price first
+
+        if (appliedVoucher) {
+          try {
+            // Re-apply voucher to trigger price check and update
+            await applyVoucher(appliedVoucher);
+            const discountedPrice = Math.max(
+              0,
+              roundedPrice - Number(appliedVoucher.price)
+            );
+            setPrice(discountedPrice);
+          } catch (error) {
+            console.error("Error applying voucher:", error);
+            removeVoucher(); // Remove voucher if it can't be applied
+            setPrice(roundedPrice);
+          }
+        } else {
+          setPrice(roundedPrice);
+        }
 
         setIsLoading(false);
       } catch (error) {
@@ -125,41 +148,11 @@ const DeliveryDistance = () => {
     };
 
     fetchRoute();
-  }, [pickupLocation, deliveryLocation, setDeliveryCost]);
+  }, [pickupLocation, deliveryLocation, appliedVoucher]);
 
-  // Reset voucher state when component mounts
-  useEffect(() => {
-    resetVoucherState();
-  }, [resetVoucherState]);
-
-  // Update price when voucher changes
-  useEffect(() => {
-    if (appliedVoucher) {
-      try {
-        // Apply voucher discount
-        const basePrice = Number(originalPrice);
-        const voucherAmount = Number(appliedVoucher.price);
-        const discountedPrice = Math.max(0, basePrice - voucherAmount);
-        setPrice(roundPrice(discountedPrice));
-      } catch (error) {
-        toast.error(error.message);
-        removeVoucher();
-        setPrice(originalPrice);
-      }
-    } else {
-      setPrice(originalPrice);
-    }
-  }, [appliedVoucher, originalPrice, removeVoucher]);
-
-  // Reset voucher when component unmounts
-  useEffect(() => {
-    return () => {
-      resetVoucherState();
-    };
-  }, [resetVoucherState]);
-
+  // Handle back navigation
   const handleBack = () => {
-    removeVoucher(); // Also reset when going back
+    removeVoucher();
     navigate(-1);
   };
 
@@ -190,9 +183,9 @@ const DeliveryDistance = () => {
       state: {
         returnTo: "/delivery-distance",
         routeData,
-        price: originalPrice,
         pickupLocation,
         deliveryLocation,
+        originalPrice: originalPrice,
       },
     });
   };
@@ -260,13 +253,22 @@ const DeliveryDistance = () => {
                 <span className="payment-label">GoPay</span>
                 <div className="payment-amount">
                   {appliedVoucher && (
-                    <span className="original-price">
+                    <span
+                      className="original-price"
+                      style={{
+                        textDecoration: "line-through",
+                        color: "#999",
+                        marginRight: "8px",
+                      }}>
                       Rp {originalPrice.toLocaleString()}
                     </span>
                   )}
                   <span
                     className={appliedVoucher ? "discounted-price" : ""}
-                    style={{ color: appliedVoucher ? "#4CAF50" : "#333" }}>
+                    style={{
+                      color: appliedVoucher ? "#4CAF50" : "#333",
+                      fontWeight: "bold",
+                    }}>
                     Rp {price.toLocaleString()}
                   </span>
                 </div>
@@ -276,7 +278,16 @@ const DeliveryDistance = () => {
               className={`voucher-button ${appliedVoucher ? "applied" : ""}`}
               onClick={handleVoucherClick}>
               <IoTicketOutline />
-              {appliedVoucher ? "Change voucher" : "Use voucher?"}
+              {appliedVoucher ? (
+                <>
+                  <span>Voucher applied - </span>
+                  <span style={{ color: "#4CAF50" }}>
+                    Save Rp {(originalPrice - price).toLocaleString()}
+                  </span>
+                </>
+              ) : (
+                "Use voucher?"
+              )}
             </button>
           </div>
           <div className="confirm-button-container">
