@@ -1,15 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useVoucherStore from "../store/voucherStore";
 import { toast } from "react-hot-toast";
 
 const VoucherCard = ({ voucher }) => {
   const navigate = useNavigate();
-  const { deliveryCost, applyVoucher, useVoucher } = useVoucherStore();
+  const location = useLocation();
+  const { deliveryCost, applyVoucher, appliedVoucher } = useVoucherStore();
 
   const currentDate = new Date();
   const validUntil = new Date(voucher.validUntil);
   const isExpired = currentDate > validUntil;
-  const isBelowMinPurchase = deliveryCost < voucher.minPurchase;
+
+  // Get the original price from location state
+  const originalPrice = location.state?.originalPrice;
+
+  // Check minimum purchase against original price, not the discounted price
+  const isBelowMinPurchase = originalPrice
+    ? originalPrice < voucher.minPurchase
+    : deliveryCost < voucher.minPurchase;
 
   const handleUseVoucher = async () => {
     try {
@@ -27,20 +35,10 @@ const VoucherCard = ({ voucher }) => {
         return;
       }
 
-      if (voucher.isUsed) {
-        toast.error("This voucher has already been used");
-        return;
-      }
-
-      // If we're applying the voucher to a delivery
-      if (deliveryCost > 0) {
-        applyVoucher(voucher);
-        navigate(-1);
-      } else {
-        // If we're just marking it as used
-        await useVoucher(voucher.userVoucherId);
-        toast.success("Voucher marked as used");
-      }
+      // Apply the voucher and navigate back
+      applyVoucher(voucher);
+      toast.success("Voucher applied successfully!");
+      navigate(-1);
     } catch (error) {
       toast.error(error.message);
     }
@@ -58,25 +56,20 @@ const VoucherCard = ({ voucher }) => {
         Minimum Purchase: Rp {voucher.minPurchase.toLocaleString("id-ID")}
       </p>
       <p className="valid-until">
-        Valid Until: {new Date(voucher.validUntil).toLocaleDateString("id-ID")}
+        Valid Until: {new Date(voucher.validUntil).toLocaleDateString()}
       </p>
-      {voucher.claimedAt && (
-        <p className="claimed-at">
-          Claimed: {new Date(voucher.claimedAt).toLocaleDateString("id-ID")}
-        </p>
-      )}
       <button
         className={`use-button ${
-          isExpired || isBelowMinPurchase || voucher.isUsed ? "disabled" : ""
+          isExpired || isBelowMinPurchase ? "disabled" : ""
         }`}
         onClick={handleUseVoucher}
-        disabled={isExpired || isBelowMinPurchase || voucher.isUsed}>
+        disabled={isExpired || isBelowMinPurchase}>
         {isExpired
           ? "Expired"
-          : voucher.isUsed
-          ? "Used"
           : isBelowMinPurchase
           ? `Min. Purchase Rp ${voucher.minPurchase.toLocaleString("id-ID")}`
+          : appliedVoucher
+          ? "Change voucher"
           : "Use"}
       </button>
     </div>
