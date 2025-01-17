@@ -12,11 +12,17 @@ const useVoucherStore = create(
       error: null,
       appliedVoucher: null,
       deliveryCost: 0,
+      originalDeliveryCost: 0,
       userVouchers: [],
 
       setSelectedCategory: (category) => set({ selectedCategory: category }),
       setVoucherCode: (code) => set({ voucherCode: code }),
-      setDeliveryCost: (cost) => set({ deliveryCost: cost }),
+      setDeliveryCost: (cost) => {
+        set({
+          originalDeliveryCost: cost,
+          deliveryCost: cost,
+        });
+      },
 
       addUserVoucher: (voucher) => {
         const currentUserVouchers = get().userVouchers;
@@ -28,29 +34,41 @@ const useVoucherStore = create(
       applyVoucher: (voucher) => {
         const currentDate = new Date();
         const validUntil = new Date(voucher.validUntil);
-        const deliveryCost = get().deliveryCost;
+        const originalCost = get().originalDeliveryCost;
 
         if (currentDate > validUntil) {
           throw new Error("Voucher has expired");
         }
 
-        if (deliveryCost < voucher.minPurchase) {
+        if (originalCost < voucher.minPurchase) {
           throw new Error(
             `Minimum purchase amount is Rp ${voucher.minPurchase.toLocaleString()}`
           );
         }
 
-        set({ appliedVoucher: voucher });
+        const discountedPrice = Math.max(
+          0,
+          originalCost - Number(voucher.price)
+        );
+        set({
+          appliedVoucher: voucher,
+          deliveryCost: discountedPrice,
+        });
       },
 
       removeVoucher: () => {
-        set({ appliedVoucher: null });
+        const originalCost = get().originalDeliveryCost;
+        set({
+          appliedVoucher: null,
+          deliveryCost: originalCost,
+        });
       },
 
       resetVoucherState: () => {
+        const originalCost = get().originalDeliveryCost;
         set({
           appliedVoucher: null,
-          deliveryCost: 0,
+          deliveryCost: originalCost,
         });
       },
 
@@ -104,8 +122,12 @@ const useVoucherStore = create(
     }),
     {
       name: "voucher-storage",
+      getStorage: () => localStorage,
       partialize: (state) => ({
         userVouchers: state.userVouchers,
+        deliveryCost: state.deliveryCost,
+        originalDeliveryCost: state.originalDeliveryCost,
+        appliedVoucher: state.appliedVoucher,
       }),
     }
   )
