@@ -41,8 +41,6 @@ const driverController = {
         // console.log("Setting image path:", imagePath); image url path yang diupload ke database
         driverData.profileImage = imagePath;
       }
-
-      // Log the final data being sent to database
       // console.log("Data being sent to database:", driverData); informasi data yang dikirim ke database
 
       const driver = await Driver.create(driverData);
