@@ -54,3 +54,11 @@ body {
   background-color: #575757;
   border-radius: 4px;
 }
+
+.nav-user {
+  color: #666;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
