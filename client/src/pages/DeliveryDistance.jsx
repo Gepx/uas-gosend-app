@@ -26,13 +26,8 @@ const DeliveryDistance = () => {
   const [price, setPrice] = useState(0);
   const [showConfirm, setShowConfirm] = useState(false);
   const [originalPrice, setOriginalPrice] = useState(0);
-  const {
-    appliedVoucher,
-    setDeliveryCost,
-    removeVoucher,
-    resetVoucherState,
-    applyVoucher,
-  } = useVoucherStore();
+  const { appliedVoucher, setDeliveryCost, removeVoucher, resetVoucherState } =
+    useVoucherStore();
 
   // Price calculation constants
   const BASE_PRICE = 8000;
@@ -54,6 +49,27 @@ const DeliveryDistance = () => {
 
   // Redirect if no locations are provided
   useEffect(() => {
+    // Check if we're coming back from voucher page
+    const isFromVoucherPage = location.state?.returnTo === "/delivery-distance";
+
+    // Check if this is a new request by comparing with previous coordinates
+    const previousPickup = localStorage.getItem("previousPickup");
+    const previousDelivery = localStorage.getItem("previousDelivery");
+    const isNewRequest =
+      !previousPickup ||
+      !previousDelivery ||
+      previousPickup !== JSON.stringify(pickupLocation) ||
+      previousDelivery !== JSON.stringify(deliveryLocation);
+
+    // Store current coordinates for next comparison
+    localStorage.setItem("previousPickup", JSON.stringify(pickupLocation));
+    localStorage.setItem("previousDelivery", JSON.stringify(deliveryLocation));
+
+    // Reset voucher if it's a new request and not coming from voucher page
+    if (isNewRequest && !isFromVoucherPage) {
+      resetVoucherState();
+    }
+
     if (
       !pickupLocation ||
       !deliveryLocation ||
@@ -63,7 +79,13 @@ const DeliveryDistance = () => {
       navigate("/");
       return;
     }
-  }, [pickupLocation, deliveryLocation, navigate]);
+  }, [
+    pickupLocation,
+    deliveryLocation,
+    navigate,
+    resetVoucherState,
+    location.state,
+  ]);
 
   const bounds = useMemo(() => {
     if (
@@ -118,25 +140,33 @@ const DeliveryDistance = () => {
         const calculatedPrice = BASE_PRICE + distanceInKm * PRICE_PER_KM;
         const roundedPrice = roundPrice(calculatedPrice);
 
-        setOriginalPrice(roundedPrice);
-        setDeliveryCost(roundedPrice); // Set original price first
+        // Check if we're coming back from voucher page
+        const isFromVoucherPage =
+          location.state?.returnTo === "/delivery-distance";
 
-        if (appliedVoucher) {
-          try {
-            // Re-apply voucher to trigger price check and update
-            await applyVoucher(appliedVoucher);
-            const discountedPrice = Math.max(
-              0,
-              roundedPrice - Number(appliedVoucher.price)
-            );
-            setPrice(discountedPrice);
-          } catch (error) {
-            console.error("Error applying voucher:", error);
-            removeVoucher(); // Remove voucher if it can't be applied
-            setPrice(roundedPrice);
-          }
+        // Only apply discount if we're returning from voucher page AND have a valid voucher with price
+        if (isFromVoucherPage && appliedVoucher && appliedVoucher.price) {
+          // console.log("Debug - Applied Voucher:", appliedVoucher); showing applied voucher data
+          // console.log("Debug - Original Price:", roundedPrice); showing original price data
+
+          setOriginalPrice(roundedPrice);
+          setDeliveryCost(roundedPrice);
+
+          const discountedPrice = Math.max(
+            0,
+            roundedPrice - appliedVoucher.price
+          );
+          // console.log("Debug - Discounted Price:", discountedPrice); showing discounted price data
+          setPrice(discountedPrice);
         } else {
+          // For new requests or when no voucher was selected
+          setOriginalPrice(roundedPrice);
+          setDeliveryCost(roundedPrice);
           setPrice(roundedPrice);
+          // Reset voucher state if we came back without selecting a voucher
+          if (isFromVoucherPage && (!appliedVoucher || !appliedVoucher.price)) {
+            resetVoucherState();
+          }
         }
 
         setIsLoading(false);
@@ -148,7 +178,15 @@ const DeliveryDistance = () => {
     };
 
     fetchRoute();
-  }, [pickupLocation, deliveryLocation, appliedVoucher]);
+  }, [pickupLocation, deliveryLocation]);
+
+  // Handle price updates when voucher changes
+  useEffect(() => {
+    if (appliedVoucher && originalPrice) {
+      const discountedPrice = Math.max(0, originalPrice - appliedVoucher.price);
+      setPrice(discountedPrice);
+    }
+  }, [appliedVoucher, originalPrice]);
 
   // Handle back navigation
   const handleBack = () => {
@@ -162,6 +200,14 @@ const DeliveryDistance = () => {
 
   const handleConfirmYes = () => {
     setShowConfirm(false);
+
+    // Clear previous coordinates from storage
+    localStorage.removeItem("previousPickup");
+    localStorage.removeItem("previousDelivery");
+
+    // Reset voucher state after order completion
+    resetVoucherState();
+
     navigate("/delivery-tracking", {
       state: {
         // For map display and route calculation
@@ -278,6 +324,7 @@ const DeliveryDistance = () => {
               className={`voucher-button ${appliedVoucher ? "applied" : ""}`}
               onClick={handleVoucherClick}>
               <IoTicketOutline />
+              {/* {console.log("Debug - Render - Applied Voucher:", appliedVoucher)}  */}
               {appliedVoucher ? (
                 <>
                   <span>Voucher applied - </span>
