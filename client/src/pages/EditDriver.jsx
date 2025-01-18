@@ -58,10 +58,7 @@ const EditDriver = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      await updateDriver(Number(id), {
-        ...formData,
-        profileImage: imagePreview || formData.profileImage,
-      });
+      await updateDriver(Number(id), formData);
       navigate("/drivers");
     } catch (error) {
       console.error("Error updating driver:", error);
