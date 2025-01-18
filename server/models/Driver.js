@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        is: /^\+?[\d\s-]+$/,
+        is: /^[0-9]{10,13}$/,
       },
     },
     licensePlate: {
