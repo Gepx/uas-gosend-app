@@ -75,7 +75,12 @@ const PickupForm = ({ onSubmit }) => {
   const handleInputChange = async (event) => {
     const query = event.target.value;
     setInputValue(query);
-    fetchSuggestions(query);
+    // Only fetch suggestions if input is not just whitespace
+    if (query.trim()) {
+      fetchSuggestions(query);
+    } else {
+      clearSuggestions();
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -89,10 +94,14 @@ const PickupForm = ({ onSubmit }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // Check if input value is not just whitespace
+    if (!inputValue.trim()) {
+      return;
+    }
     if (markerPosition && selectedPackageType && selectedWeight) {
       onSubmit({
         position: markerPosition,
-        address: inputValue,
+        address: inputValue.trim(),
         packageType: selectedPackageType,
         weight: selectedWeight,
       });

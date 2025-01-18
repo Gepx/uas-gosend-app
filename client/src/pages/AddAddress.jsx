@@ -46,10 +46,32 @@ const AddAddress = () => {
     setSuggestions([]);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addAddress(formData);
-    navigate("/saved-address");
+  const handleInputChange = async (event) => {
+    const query = event.target.value;
+    setFormData({ ...formData, address: query });
+    // Only fetch suggestions if input is not just whitespace
+    if (query.trim()) {
+      handleAddressSearch(query);
+    } else {
+      clearSuggestions();
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // Check if input value is not just whitespace
+    if (!formData.address.trim()) {
+      return;
+    }
+    try {
+      setLoading(true);
+      await addAddress(formData);
+      navigate("/saved-address");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -107,10 +129,7 @@ const AddAddress = () => {
             type="text"
             name="address"
             value={formData.address}
-            onChange={(e) => {
-              handleChange(e);
-              handleAddressSearch(e.target.value);
-            }}
+            onChange={handleInputChange}
             placeholder="Search for address..."
             required
           />

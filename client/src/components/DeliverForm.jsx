@@ -14,6 +14,7 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
     setMapCenter,
     setMarkerPosition,
     fetchSuggestions,
+    clearSuggestions,
   } = useLocationStore();
 
   const [inputValue, setInputValue] = useState("");
@@ -23,7 +24,12 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
   const handleInputChange = async (event) => {
     const query = event.target.value;
     setInputValue(query);
-    fetchSuggestions(query);
+    // Only fetch suggestions if input is not just whitespace
+    if (query.trim()) {
+      fetchSuggestions(query);
+    } else {
+      clearSuggestions();
+    }
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -35,36 +41,32 @@ const DeliverForm = ({ onBack, pickupLocation }) => {
     setSuggestions([]);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!deliveryMarker) return;
-
-    // Ensure coordinates are in [lat, lon] format
-    const pickupCoordinates = Array.isArray(pickupLocation.position)
-      ? pickupLocation.position
-      : [0, 0];
-    const deliveryCoordinates = Array.isArray(deliveryMarker)
-      ? deliveryMarker
-      : [0, 0];
-
-    navigate("/delivery-distance", {
-      state: {
-        // For route calculations and map
-        pickupLocation: pickupCoordinates,
-        deliveryLocation: deliveryCoordinates,
-        // For history storage
-        locationData: {
-          pickupLocation: {
-            coordinates: pickupCoordinates,
-            address: pickupLocation.address,
-          },
-          deliveryLocation: {
-            coordinates: deliveryCoordinates,
-            address: inputValue,
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Check if input value is not just whitespace
+    if (!inputValue.trim()) {
+      return;
+    }
+    if (deliveryMarker) {
+      navigate("/delivery-distance", {
+        state: {
+          // For route calculations and map
+          pickupLocation: pickupLocation.position,
+          deliveryLocation: deliveryMarker,
+          // For history storage
+          locationData: {
+            pickupLocation: {
+              coordinates: pickupLocation.position,
+              address: pickupLocation.address,
+            },
+            deliveryLocation: {
+              coordinates: deliveryMarker,
+              address: inputValue.trim(),
+            },
           },
         },
-      },
-    });
+      });
+    }
   };
 
   return (
