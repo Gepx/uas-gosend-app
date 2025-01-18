@@ -244,7 +244,7 @@ const DeliveryTracking = () => {
         status: "completed",
       };
 
-      console.log("Saving history with data:", historyData); // Debug log
+      // console.log("Saving history with data:", historyData); save history data
       await historyService.addHistory(historyData);
       toast.success("Delivery completed and saved!");
       navigate("/");
@@ -275,7 +275,7 @@ const DeliveryTracking = () => {
         status: "completed",
       };
 
-      console.log("Saving history with data:", historyData); // Debug log
+      // console.log("Saving history with data:", historyData); save history data
       await historyService.addHistory(historyData);
       toast.success("Delivery completed!");
       navigate("/");
