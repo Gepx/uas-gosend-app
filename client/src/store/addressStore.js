@@ -6,6 +6,11 @@ const useAddressStore = create((set) => ({
   loading: false,
   error: null,
 
+  // State management functions
+  setLoading: (loading) => set({ loading }),
+  setError: (error) => set({ error }),
+  resetError: () => set({ error: null }),
+
   // Fetch all addresses
   fetchAddresses: async () => {
     set({ loading: true });

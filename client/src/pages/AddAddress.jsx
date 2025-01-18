@@ -7,7 +7,7 @@ import "../assets/css/AddressForm.css";
 
 const AddAddress = () => {
   const navigate = useNavigate();
-  const { addAddress } = useAddressStore();
+  const { addAddress, setLoading, setError, resetError } = useAddressStore();
   const [suggestions, setSuggestions] = useState([]);
   const [formData, setFormData] = useState({
     recipientName: "",
@@ -53,7 +53,7 @@ const AddAddress = () => {
     if (query.trim()) {
       handleAddressSearch(query);
     } else {
-      clearSuggestions();
+      setSuggestions([]);
     }
   };
 
@@ -65,6 +65,7 @@ const AddAddress = () => {
     }
     try {
       setLoading(true);
+      resetError();
       await addAddress(formData);
       navigate("/saved-address");
     } catch (error) {
