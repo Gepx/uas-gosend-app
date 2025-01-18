@@ -54,8 +54,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     profileImage: {
-      type: DataTypes.STRING, // URL to the image
-      allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "../public/driver-placeholder.png",
     },
   });
   return Driver;
