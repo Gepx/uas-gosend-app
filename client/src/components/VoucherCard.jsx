@@ -38,7 +38,12 @@ const VoucherCard = ({ voucher }) => {
       // Apply the voucher and navigate back
       applyVoucher(voucher);
       toast.success("Voucher applied successfully!");
-      navigate(-1);
+      navigate(-1, {
+        state: {
+          ...location.state,
+          returnTo: "/delivery-distance",
+        },
+      });
     } catch (error) {
       toast.error(error.message);
     }
