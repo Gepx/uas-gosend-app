@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 
   // If route requires admin access and user is not admin
   if (requireAdmin && !isAdmin()) {
-    return <Navigate to="/" />;
+    return <Navigate to="/forbidden" replace />;
   }
 
   return children;
