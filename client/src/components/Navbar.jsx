@@ -4,7 +4,7 @@ import "../assets/css/Navbar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isAdmin, logout } = useAuthStore();
+  const { isAuthenticated, isAdmin, logout, user } = useAuthStore();
 
   const handleLogout = () => {
     logout();
@@ -18,6 +18,13 @@ const Navbar = () => {
           GosendApp
         </Link>
         <ul className="nav-menu">
+          {/* Show user email when authenticated */}
+          {isAuthenticated && user && (
+            <li className="nav-item">
+              <span className="nav-user">{user.email}</span>
+            </li>
+          )}
+
           {/* Always visible */}
           <li className="nav-item">
             <Link to="/" className="nav-links">
