@@ -12,6 +12,8 @@ import Drivers from "./pages/Drivers";
 import EditDriver from "./pages/EditDriver";
 import DeliveryDistance from "./pages/DeliveryDistance";
 import DeliveryTracking from "./pages/DeliveryTracking";
+import NotFound from "./pages/NotFound";
+import Forbidden from "./pages/Forbidden";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -108,6 +110,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Error Pages */}
+          <Route path="/forbidden" element={<Forbidden />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster
           position="top-right"
