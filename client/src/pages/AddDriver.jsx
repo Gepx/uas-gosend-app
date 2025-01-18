@@ -48,13 +48,7 @@ function AddDriver() {
       setLoading(true);
       resetError();
 
-      const driverWithImage = {
-        ...driverData,
-        profileImage: imagePreview || "/default-profile.png",
-        createdAt: new Date().toISOString(),
-      };
-
-      addDriver(driverWithImage);
+      await addDriver(driverData);
       navigate("/drivers");
     } catch (error) {
       setError(error.message);
