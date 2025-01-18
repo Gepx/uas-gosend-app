@@ -4,6 +4,7 @@ import historyService from "../services/historyService";
 import { ClipLoader } from "react-spinners";
 import driverPlaceholder from "../assets/images/driver-placeholder.png";
 import { toast } from "react-hot-toast";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 const History = () => {
   const [selectedDelivery, setSelectedDelivery] = useState(null);
@@ -15,7 +16,7 @@ const History = () => {
       try {
         setLoading(true);
         const data = await historyService.getAllHistory();
-        console.log("Fetched history:", data); // Debug log
+        // console.log("Fetched history:", data); fetched history data from db
         setDeliveries(data);
       } catch (error) {
         console.error("Error fetching history:", error);
@@ -29,7 +30,7 @@ const History = () => {
   }, []);
 
   const handleCardClick = (delivery) => {
-    console.log("Selected delivery:", delivery); // Debug log
+    // console.log("Selected delivery:", delivery); selected delivery data
     setSelectedDelivery(delivery);
   };
 
@@ -50,52 +51,62 @@ const History = () => {
     <div className="history-container">
       <h1>Delivery History</h1>
 
-      <div className="history-grid">
-        {deliveries.map((delivery) => (
-          <div
-            key={delivery.id}
-            className="history-block"
-            onClick={() => handleCardClick(delivery)}>
-            <div className="block-header">
-              <span className={`status ${delivery.status.toLowerCase()}`}>
-                {delivery.status}
-              </span>
-              <span className="date">
-                {new Date(delivery.orderDate).toLocaleDateString()}
-              </span>
-            </div>
-
-            <div className="block-content">
-              <div className="block-locations">
-                <p className="block-pickup">
-                  {delivery.pickupLocation || "Unknown Location"}
-                </p>
-                <span className="block-arrow">↓</span>
-                <p className="block-delivery">
-                  {delivery.deliveryLocation || "Unknown Location"}
-                </p>
-              </div>
-              <div className="block-price">
-                {Number(delivery.originalPrice) !==
-                  Number(delivery.discountPrice) && (
-                  <span className="original-price">
-                    Rp {Number(delivery.originalPrice).toLocaleString()}
-                  </span>
-                )}
-                <span
-                  className={
-                    Number(delivery.originalPrice) !==
-                    Number(delivery.discountPrice)
-                      ? "discounted-price"
-                      : ""
-                  }>
-                  Rp {Number(delivery.discountPrice).toLocaleString()}
+      {deliveries.length === 0 ? (
+        <div className="no-history">
+          <div className="no-history-content">
+            <IoDocumentTextOutline className="no-history-icon" />
+            <h2>No Order History</h2>
+            <p>You haven't made any deliveries yet</p>
+          </div>
+        </div>
+      ) : (
+        <div className="history-grid">
+          {deliveries.map((delivery) => (
+            <div
+              key={delivery.id}
+              className="history-block"
+              onClick={() => handleCardClick(delivery)}>
+              <div className="block-header">
+                <span className={`status ${delivery.status.toLowerCase()}`}>
+                  {delivery.status}
+                </span>
+                <span className="date">
+                  {new Date(delivery.orderDate).toLocaleDateString()}
                 </span>
               </div>
+
+              <div className="block-content">
+                <div className="block-locations">
+                  <p className="block-pickup">
+                    {delivery.pickupLocation || "Unknown Location"}
+                  </p>
+                  <span className="block-arrow">↓</span>
+                  <p className="block-delivery">
+                    {delivery.deliveryLocation || "Unknown Location"}
+                  </p>
+                </div>
+                <div className="block-price">
+                  {Number(delivery.originalPrice) !==
+                    Number(delivery.discountPrice) && (
+                    <span className="original-price">
+                      Rp {Number(delivery.originalPrice).toLocaleString()}
+                    </span>
+                  )}
+                  <span
+                    className={
+                      Number(delivery.originalPrice) !==
+                      Number(delivery.discountPrice)
+                        ? "discounted-price"
+                        : ""
+                    }>
+                    Rp {Number(delivery.discountPrice).toLocaleString()}
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {selectedDelivery && (
         <div className="history-modal-overlay" onClick={closeModal}>
