@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./models");
+const path = require("path");
+const ensureUploadsDir = require("./utils/ensureUploadsDir");
 const addressRoutes = require("./routes/addressRoutes");
 const driverRoutes = require("./routes/driverRoutes");
 const voucherRoutes = require("./routes/voucherRoutes");
@@ -16,6 +18,12 @@ const app = express();
 app.use(cors()); // Simplified CORS for now
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Ensure uploads directory exists
+ensureUploadsDir();
+
+// Serve static files from uploads directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
